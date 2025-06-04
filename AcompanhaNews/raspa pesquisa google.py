@@ -25,7 +25,9 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 warnings.filterwarnings(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
-import schedule
+import traceback
+
+# import schedule
 
 #================================================================================
 chrome_options = Options()
@@ -39,24 +41,24 @@ print('Iniciando o navegador...'); time.sleep(5)
 
 #================================================================================
 def buscar_noticias(termo_busca, intervalo="1h"):
-    # opções de intervalo 
-    # 'Última hora':'1h',
-    # 'Últimas 24 horas': '1d',
-    # 'Última semana':'7d',
+    # opÃ§Ãµes de intervalo 
+    # 'Ãšltima hora':'1h',
+    # 'Ãšltimas 24 horas': '1d',
+    # 'Ãšltima semana':'7d',
     termo_url = termo_busca.replace(" ", "%20")
     url = f"https://news.google.com/search?q={termo_url}%20when%3A{intervalo}&hl=pt-BR&gl=BR&ceid=BR%3Apt-419"
     driver.get(url)
 
 #================================================================================
 def extrair_noticias():
-    # Pega o HTML da página e processa com BS4
+    # Pega o HTML da pÃ¡gina e processa com BS4
     html = driver.find_element("xpath", "/html").get_attribute("outerHTML")
     soup = BeautifulSoup(html, "html.parser")
     resultados = []
 
     for artigo in soup.select("article"):
         try:
-            # Título e link
+            # TÃ­tulo e link
             a_tag = artigo.select_one("a.JtKRv")
             if not a_tag:
                 continue
@@ -71,7 +73,7 @@ def extrair_noticias():
 
             # Tempo publicado
             tempo_elem = artigo.select_one("time.hvbAAd")
-            tempo_texto = tempo_elem.get_text(strip=True) if tempo_elem else "Tempo não disponível"
+            tempo_texto = tempo_elem.get_text(strip=True) if tempo_elem else "Tempo nÃ£o disponÃ­vel"
             tempo_data = tempo_elem.get("datetime") if tempo_elem and tempo_elem.has_attr("datetime") else None
 
             resultados.append({
@@ -92,11 +94,11 @@ def formatar_linha_estilo_telegram(df, linha):
     dados = df.iloc[linha]
 
     return (
-        f"<b>📰 {dados['titulo']}</b>\n"
-        f"<b>🌐 Site:</b> {dados['site']}\n"
-        f"<b>⏱ Tempo:</b> {dados['tempo']}\n"
-        f"<b>📅 Data ISO:</b> {dados['data_iso']}\n"
-        f"<a href=\"{dados['link']}\">🔗 Link</a>"
+        f"<b>ðŸ“° {dados['titulo']}</b>\n"
+        f"<b>ðŸŒ Site:</b> {dados['site']}\n"
+        f"<b>â± Tempo:</b> {dados['tempo']}\n"
+        f"<b>ðŸ“… Data ISO:</b> {dados['data_iso']}\n"
+        f"<a href=\"{dados['link']}\">ðŸ”— Link</a>"
     )
 
 # Substitua pelos seus valores
@@ -130,7 +132,7 @@ def pesquisa_completa(pesquisa, periodo='1h'):
         df = pd.DataFrame(noticias)
         df['pesquisa'] = pesquisa
 
-        # verificando se já há registro desta noticia no sistema
+        # verificando se jÃ¡ hÃ¡ registro desta noticia no sistema
         for linha in range(len(df)):
             filtro = (fd['titulo'] == df['titulo'][linha]) & (fd['site'] == df['site'][linha])
             if len(fd[filtro]) >= 1:
@@ -155,7 +157,7 @@ def aviso_vida():
     send_telegram_message('***********************************')
 #================================================================================
 
-# Função para pesquisar por todos os termos
+# FunÃ§Ã£o para pesquisar por todos os termos
 def rodar_pesquisas():
     # Lista de termos de pesquisa
     termos_de_pesquisa = [
@@ -178,20 +180,32 @@ def rodar_pesquisas():
     ]
     for termo in termos_de_pesquisa:
         print('Pesquisando:', termo)
-        pesquisa_completa(termo)  # Sua função que busca as notícias
+        pesquisa_completa(termo)  # Sua funÃ§Ã£o que busca as notÃ­cias
         time.sleep(1)
 # Testando
 pesquisa_completa('BTC'); time.sleep(2)
+#===============================================================================
 
-# Agendamentos
-# schedule.every(5).minutes.do(lambda: pesquisa_completa('cryptos'))
-schedule.every(4).minutes.do(rodar_pesquisas)
-schedule.every().hour.at(":00").do(salvando_planilha_registros)
-
-# Loop principal
-print('Entrando em Looping...'); time.sleep(2)
 while True:
-    schedule.run_pending()  # Executa a próxima função agendada, se houver
-    time.sleep(1)           # Aguarda 1 segundo antes de verificar novamente
+    try:
+        rodar_pesquisas()
+        time.sleep(60*5)
+    except:
+        mensagem = 'erro fatal! o codigo foi encerrado.\n' + traceback.print_exc()
+        send_telegram_message(mensagem)
+        break
+
 
 #===============================================================================
+# Agendamentos
+# schedule.every(5).minutes.do(lambda: pesquisa_completa('cryptos'))
+# schedule.every(4).minutes.do(rodar_pesquisas)
+# schedule.every().hour.at(":00").do(salvando_planilha_registros)
+
+# # Loop principal
+# print('Entrando em Looping...'); time.sleep(2)
+# while True:
+#     schedule.run_pending()  # Executa a prÃ³xima funÃ§Ã£o agendada, se houver
+#     time.sleep(1)           # Aguarda 1 segundo antes de verificar novamente
+
+# #===============================================================================

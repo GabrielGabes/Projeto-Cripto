@@ -19,7 +19,7 @@ from strategies.ton_strategy import getAdvancedTradeStrategy
 
 STOCK_CODE = 'ENA'  # Código da Criptomoeda
 OPERATION_CODE = STOCK_CODE + "USDT"  # Código da operação (cripto + moeda)
-INITIAL_BALANCE = 1000  # Valor de investimento inicial em USDT ou BRL
+INITIAL_BALANCE = 100  # Valor de investimento inicial em USDT ou BRL
 
 # ----------------------------------------
 # 📊 PERÍODO DO CANDLE, SELECIONAR 1 📊
