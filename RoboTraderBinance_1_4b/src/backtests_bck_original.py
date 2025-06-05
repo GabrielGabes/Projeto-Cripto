@@ -53,6 +53,11 @@ print(devTrader.stock_data.tail(3))
 # )
 # devTrader.updateAllData()
 
+from tests.baixar_candles import baixar_candles
+DEFAULT_START_DATE = '28/05/2025 10:00'
+DEFAULT_END_DATE = '04/06/2025 10:00'
+dados = baixar_candles(OPERATION_CODE, DEFAULT_START_DATE, DEFAULT_END_DATE, CANDLE_PERIOD, ajuste=True)
+
 print(f"\n{STOCK_CODE} - MA RSI e VOLUME - {str(CANDLE_PERIOD)}")
 backtestRunner(
     stock_data=devTrader.stock_data,

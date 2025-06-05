@@ -165,7 +165,7 @@ def rodar_pesquisas():
         'Near Protocol (NEAR) crypto',
         'Flow (FLOW) crypto',
         'Kadena (KDA) crypto',
-        'HBAR (Hedera Hashgraph) crypto',
+        'Hedera Hashgraph (HBAR) crypto',
         'Oasis Network (ROSE) crypto',
         'Ocean Protocol (OCEAN) crypto',
         'Arweave (AR) crypto',

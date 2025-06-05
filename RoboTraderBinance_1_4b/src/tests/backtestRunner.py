@@ -220,55 +220,90 @@ def backtestRunner(
     # ------------------------------------------------------------------------
     # --------------------- GRAFICO ---------------------
     # Criar diretório se não existir
-    save_path = r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src\tests\graficos"
-    os.makedirs(save_path, exist_ok=True)
+    # save_path = r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src\tests\graficos"
+    # os.makedirs(save_path, exist_ok=True)
     
-    # Nome do arquivo baseado na estratégia
-    if nome_estrategia == '':
-        file_name = f"{strategy_function.__name__}.jpg"
-    else:
-        file_name = f"{nome_estrategia}.jpg"
-    full_path = os.path.join(save_path, file_name)
+    # # Nome do arquivo baseado na estratégia
+    # if nome_estrategia == '':
+    #     file_name = f"{strategy_function.__name__}.jpg"
+    # else:
+    #     file_name = f"{nome_estrategia}.jpg"
+    # full_path = os.path.join(save_path, file_name)
 
-    # 🔹 Criando subtítulo do gráfico
-    subtitle_text = f"Balanço Final: ${balance:.2f} | Lucro/Prejuízo: {profit_percentage:.2f}% | Operações: {trades}"
+    # # 🔹 Criando subtítulo do gráfico
+    # subtitle_text = f"Balanço Final: ${balance:.2f} | Lucro/Prejuízo: {profit_percentage:.2f}% | Operações: {trades}"
 
-    # Plotando os resultados
-    plt.figure(figsize=(21.6, 10.8), dpi=100)  # 🔹 Ajustado para tela cheia
+    # # Plotando os resultados
+    # plt.figure(figsize=(21.6, 10.8), dpi=100)  # 🔹 Ajustado para tela cheia
 
-    # plt.plot(backtest_data["close_price"], label="Preço de Fechamento", color="blue")
-    plt.plot(backtest_data["formatted_time"], backtest_data["close_price"], label="Preço de Fechamento", color="blue")
+    # # plt.plot(backtest_data["close_price"], label="Preço de Fechamento", color="blue")
+    # plt.plot(backtest_data["formatted_time"], backtest_data["close_price"], label="Preço de Fechamento", color="blue")
 
-    if buy_signals:
-        # buy_indices, buy_prices = zip(*buy_signals)
-        buy_indices, buy_prices = zip(*buy_signals) if buy_signals else ([], [])
-        plt.scatter(buy_indices, buy_prices, marker="^", color="green", label="Compra", s=100, edgecolors='black')
-    if sell_signals:
-        # sell_indices, sell_prices = zip(*sell_signals)
-        sell_indices, sell_prices = zip(*sell_signals) if sell_signals else ([], [])
-        plt.scatter(sell_indices, sell_prices, marker="v", color="red", label="Venda", s=100, edgecolors='black')
+    # if buy_signals:
+    #     # buy_indices, buy_prices = zip(*buy_signals)
+    #     buy_indices, buy_prices = zip(*buy_signals) if buy_signals else ([], [])
+    #     plt.scatter(buy_indices, buy_prices, marker="^", color="green", label="Compra", s=100, edgecolors='black')
+    # if sell_signals:
+    #     # sell_indices, sell_prices = zip(*sell_signals)
+    #     sell_indices, sell_prices = zip(*sell_signals) if sell_signals else ([], [])
+    #     plt.scatter(sell_indices, sell_prices, marker="v", color="red", label="Venda", s=100, edgecolors='black')
 
-    plt.xlabel("Data e Hora")
-    plt.ylabel("Preço")
-    plt.legend()
+    # plt.xlabel("Data e Hora")
+    # plt.ylabel("Preço")
+    # plt.legend()
     
-    # 🔹 Corrigido título do gráfico
-    plt.title(f"Estratégia de Trading: {nome_estrategia} ({strategy_function.__name__})\n{subtitle_text}")
+    # # 🔹 Corrigido título do gráfico
+    # plt.title(f"Estratégia de Trading: {nome_estrategia} ({strategy_function.__name__})\n{subtitle_text}")
 
-    qtde_valores_mostrar_eixo_x = min(40, len(extended_data))
-    plt.xticks(ticks=np.linspace(0, len(extended_data) - 1, num=qtde_valores_mostrar_eixo_x, dtype=int), 
-               labels=extended_data['formatted_time'].iloc[np.linspace(0, len(extended_data) - 1, num=qtde_valores_mostrar_eixo_x, dtype=int)], 
-               rotation=90)
-    plt.grid()
+    # qtde_valores_mostrar_eixo_x = min(40, len(extended_data))
+    # plt.xticks(ticks=np.linspace(0, len(extended_data) - 1, num=qtde_valores_mostrar_eixo_x, dtype=int), 
+    #            labels=extended_data['formatted_time'].iloc[np.linspace(0, len(extended_data) - 1, num=qtde_valores_mostrar_eixo_x, dtype=int)], 
+    #            rotation=90)
+    # plt.grid()
 
-    # Salvar o gráfico no caminho especificado
-    plt.savefig(full_path, format='jpg', dpi=300, bbox_inches='tight')
+    # # Salvar o gráfico no caminho especificado
+    # plt.savefig(full_path, format='jpg', dpi=300, bbox_inches='tight')
 
-    # Exibir gráfico na tela
-    # plt.show()  # Comentado caso não queira exibir sempre
+    # # Exibir gráfico na tela
+    # # plt.show()  # Comentado caso não queira exibir sempre
 
-    print(f"📊 Gráfico salvo em: {full_path}")
+    # print(f"📊 Gráfico salvo em: {full_path}")
 
+    # ------------------------------------------------------------------------
     # print(extended_data[extended_data['acao_tomada'].notnull()])
 
-    return profit_percentage
+    # return profit_percentage
+    return [
+        nome_estrategia if nome_estrategia != '' else strategy_function.__name__,  # Nome da estratégia
+        start_date,
+        end_date,
+        balance,
+        profit_percentage,
+        trades,
+        profit_trades_count,
+        profit_trades_value,
+        loss_trades_count,
+        loss_trades_value,
+        avg_profit_trade,
+        avg_profit_percentage,
+        avg_loss_trade_abs,
+        avg_loss_percentage
+    ]
+
+
+#| Índice | Métrica                 | Descrição                                          |
+#| ------ | ----------------------- | -------------------------------------------------- |
+#| 0      | `nome_estrategia`       | Nome da estratégia usada                           |
+#| 1      | `start_date`            | Data inicial do backtest                           |
+#| 2      | `end_date`              | Data final do backtest                             |
+#| 3      | `balance`               | Saldo final em dólar                               |
+#| 4      | `profit_percentage`     | Lucro/prejuízo percentual                          |
+#| 5      | `trades`                | Total de operações (buy + sell)                    |
+#| 6      | `profit_trades_count`   | Nº de trades lucrativos                            |
+#| 7      | `profit_trades_value`   | Valor somado dos trades com lucro                  |
+#| 8      | `loss_trades_count`     | Nº de trades com prejuízo                          |
+#| 9      | `loss_trades_value`     | Valor somado dos trades com prejuízo               |
+#| 10     | `avg_profit_trade`      | Lucro médio por trade positivo                     |
+#| 11     | `avg_profit_percentage` | Percentual médio de lucro por trade positivo       |
+#| 12     | `avg_loss_trade_abs`    | Prejuízo médio por trade negativo (valor absoluto) |
+#| 13     | `avg_loss_percentage`   | Percentual médio de prejuízo por trade negativo    |

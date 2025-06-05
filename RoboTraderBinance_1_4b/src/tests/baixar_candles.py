@@ -95,9 +95,3 @@ def baixar_candles(cod_moeda: str, data_inicio: str, data_fim: str, periodo: str
     # print(f"🕒 Intervalo real: {df['open_time'].min()} ➝ {df['open_time'].max()}")
 
     return df[["close_price", "open_time", "open_price", "high_price", "low_price", "volume"]]
-
-
-DEFAULT_START_DATE = '17/05/2025 08:00'
-DEFAULT_END_DATE = '03/06/2025 23:00'
-dados = baixar_candles('XRPUSDT', DEFAULT_START_DATE, DEFAULT_END_DATE, '1h', ajuste=True)
-print(dados['open_time'].max())
