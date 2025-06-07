@@ -1,0 +1,491 @@
+
+```{r criando funções}
+# Função para converter todas as colunas para o tipo character
+convert_to_character <- function(df) {
+  df[] <- lapply(df, as.character)
+  return(df)
+}
+
+###########################################################################
+
+# Função para normalizar os nomes das colunas
+library(stringr)
+normalize_column_names <- function(df) {
+  # Remover acentuação
+  colnames(df) <- iconv(colnames(df), from = "UTF-8", to = "ASCII//TRANSLIT")
+  # Converter para minúsculas
+  colnames(df) <- tolower(colnames(df))
+  # Substituir espaços por underscores
+  colnames(df) <- str_replace_all(colnames(df), " ", "_")
+  # Remover caracteres especiais, mantendo apenas letras, números e underscores
+  colnames(df) <- gsub("[^a-z0-9_]", "", colnames(df))
+  # Substituir múltiplos underscores consecutivos por um único underscore
+  colnames(df) <- gsub("_+", "_", colnames(df))
+  # Remover underscores no início ou fim dos nomes de colunas
+  colnames(df) <- gsub("^_|_$", "", colnames(df))
+  
+  return(df)
+}
+
+normalize_vector_names <- function(v) {
+  # Remover acentuação
+  v <- iconv(v, from = "UTF-8", to = "ASCII//TRANSLIT")
+  # Converter para minúsculas
+  v <- tolower(v)
+  # Substituir espaços por underscores
+  v <- str_replace_all(v, " ", "_")
+  # Remover caracteres especiais, mantendo apenas letras, números e underscores
+  v <- gsub("[^a-z0-9_]", "", v)
+  # Substituir múltiplos underscores consecutivos por um único underscore
+  v <- gsub("_+", "_", v)
+  # Remover underscores no início ou fim dos nomes
+  v <- gsub("^_|_$", "", v)
+  
+  return(v)
+}
+```
+
+```{r}
+df = read_excel("C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/DADOS_SIMULADOS_1semana.xlsx")
+df = normalize_column_names(df)
+df %>% View()
+df %>% names()
+# df = df %>% filter(!moeda %in% c('XRP','PEPE','DOGE'))
+# df$estrategia = factor(df$estrategia, levels = c('UT BOTS','MA RSI e VOLUME','MA ANTECIPATION','MA SIMPLES FALLBACK','RSI','VORTEX'))
+# df$candle_period = factor(df$candle_period, levels = c('1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d', '1w'))
+# df$tempo_rodando = factor(df$tempo_rodando, levels = c('dia', 'semana', 'mes'))
+
+# df = df %>% arrange(-lucroprejuizo_percentual) %>% filter(tempo_rodando != 'mes' & candle_period != '1w')
+
+df_bck = df
+df = df %>% filter(moeda %in%
+  c(    
+    'BTC', # Bitcoin
+    'ETH', # Ethereum
+    'XRP', # XRP
+    'BNB', # BNB
+    'SOL', # Solana
+    'DOGE', # Dogecoin
+    'TRX', # TRON
+    'ADA', # Cardano
+    'SUI', # Sui
+    'LINK' # Chainlink
+    )
+)
+```
+
+```{r}
+df$estrategia %>% as.factor() %>% levels()
+
+library(stringr)
+
+df$estrategia %>% as.factor() %>% levels()
+df %>% filter(str_starts(estrategia, "MA ANTECIPATION"))
+df %>% filter(str_starts(estrategia, "MA SIMPLES FALLBACK"))
+
+
+
+```
+
+
+```{r BOXPLOT MA ANTECIPATION}
+arredondamento = 1
+
+medidas <- df %>%
+  filter(str_starts(estrategia, "MA ANTECIPATION")) %>%
+  group_by(estrategia, moeda) %>%
+  summarise(
+    media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>%
+  mutate(classificacao = ifelse(mediana < 0, "Negativa", "Positiva") %>% as.factor())
+
+# Passo 2: unir a classificação ao dataframe principal
+df_plot <- df %>%
+  filter(str_starts(estrategia, "MA ANTECIPATION")) %>%
+  left_join(medidas %>% select(estrategia, moeda, classificacao), by = c("estrategia", "moeda"))
+
+# Passo 3: plot com cor baseada na classificação
+p <- ggplot(df_plot, aes(x = as.factor(moeda), y = lucro, fill = classificacao)) + 
+  # Gráficos
+  geom_violin(alpha = 0.2, show.legend = TRUE, color = "black") +
+  # geom_boxplot(alpha = 0.8, show.legend = FALSE, width = 0.5) +
+  # Médias extras
+  geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
+  geom_point(stat = "summary", fun = "mean", show.legend = FALSE,
+             shape = 21, fill = "red", color = "black", size = 2) +
+  # Linha no zero
+  geom_hline(yintercept = 0, color = "#780000", linetype = "dashed", linewidth = 0.5) +
+  # Estética
+  theme_bw() + theme(legend.position = "bottom") + 
+  labs(x = NULL, y = NULL, title = NULL, fill = "Classificação") +
+  coord_flip() +
+  facet_wrap(~estrategia, ncol = 2)
+
+print(p)
+ggsave("bxplt - MA ANTECIPATION.jpg", plot = p, height = 40, width = 25, units = "cm", dpi = 600)
+```
+
+```{r BOXPLOT MA SIMPLES FALLBACK}
+arredondamento = 1
+
+medidas <- df %>%
+  filter(str_starts(estrategia, "MA SIMPLES FALLBACK")) %>%
+  group_by(estrategia, moeda) %>%
+  summarise(
+    media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>%
+  mutate(classificacao = ifelse(mediana < 0, "Negativa", "Positiva") %>% as.factor())
+
+# Passo 2: unir a classificação ao dataframe principal
+df_plot <- df %>%
+  filter(str_starts(estrategia, "MA SIMPLES FALLBACK")) %>%
+  left_join(medidas %>% select(estrategia, moeda, classificacao), by = c("estrategia", "moeda"))
+
+# Passo 3: plot com cor baseada na classificação
+p <- ggplot(df_plot, aes(x = as.factor(moeda), y = lucro, fill = classificacao)) + 
+  # Gráficos
+  geom_violin(alpha = 0.2, show.legend = TRUE, color = "black") +
+  # geom_boxplot(alpha = 0.8, show.legend = FALSE, width = 0.5) +
+  # Médias extras
+  geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
+  geom_point(stat = "summary", fun = "mean", show.legend = FALSE,
+             shape = 21, fill = "red", color = "black", size = 2) +
+  # Linha no zero
+  geom_hline(yintercept = 0, color = "#780000", linetype = "dashed", linewidth = 0.5) +
+  # Estética
+  theme_bw() + theme(legend.position = "bottom") + 
+  labs(x = NULL, y = NULL, title = NULL, fill = "Classificação") +
+  coord_flip() +
+  facet_wrap(~estrategia, ncol = 2)
+
+print(p)
+ggsave("bxplt - MA SIMPLES FALLBACK.jpg", plot = p, height = 40, width = 25, units = "cm", dpi = 600)
+```
+
+
+```{r BOXPLOT OUTROS}
+arredondamento = 1
+
+df_filter = df %>% filter(!(str_starts(estrategia, "MA SIMPLES FALLBACK") | str_starts(estrategia, "MA ANTECIPATION")))
+
+medidas <- df_filter %>%
+  group_by(estrategia, moeda) %>%
+  summarise(
+    min = round(min(lucro, na.rm = TRUE), arredondamento),
+    media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    desv_pad = round(sd(lucro, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    max = round(max(lucro, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>%
+  mutate(classificacao = ifelse(mediana < 0, "Negativa", "Positiva") %>% as.factor())
+
+# Passo 2: unir a classificação ao dataframe principal
+df_plot <- df_filter  %>%
+  left_join(medidas %>% select(estrategia, moeda, classificacao), by = c("estrategia", "moeda"))
+
+# Passo 3: plot com cor baseada na classificação
+p <- ggplot(df_plot, aes(x = as.factor(moeda), y = lucro, fill = classificacao)) + 
+  # Gráficos
+  geom_violin(alpha = 0.2, show.legend = TRUE, color = "black") +
+  # geom_boxplot(alpha = 0.8, show.legend = FALSE, width = 0.5) +
+  # Médias extras
+  geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
+  geom_point(stat = "summary", fun = "mean", show.legend = FALSE,
+             shape = 21, fill = "red", color = "black", size = 2) +
+  # Linha no zero
+  geom_hline(yintercept = 0, color = "#780000", linetype = "dashed", linewidth = 0.5) +
+  # Estética
+  theme_bw() + theme(legend.position = "bottom") + 
+  labs(x = NULL, y = NULL, title = NULL, fill = "Classificação") +
+  coord_flip() +
+  facet_wrap(~estrategia, ncol = 2)
+
+print(p)
+ggsave("bxplt - OUTROS.jpg", plot = p, height = 40, width = 25, units = "cm", dpi = 600)
+
+```
+
+
+```{r}
+medidas <- df %>%
+  group_by(estrategia, moeda) %>%
+  summarise(
+    min = round(min(lucro, na.rm = TRUE), arredondamento),
+    media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    desv_pad = round(sd(lucro, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    max = round(max(lucro, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>%
+  mutate(classificacao = ifelse(mediana < 0, "Negativa", "Positiva") %>% as.factor())
+
+contagens <- medidas %>%
+  group_by(estrategia, classificacao) %>%
+  summarise(frequencia = n(), .groups = "drop") %>%
+  group_by(estrategia) %>%
+  mutate(
+    percentual = frequencia / sum(frequencia) * 100
+  )
+
+ggplot(contagens, aes(x = as.factor(estrategia), y = percentual, fill = classificacao)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = sprintf("%.0f%%", percentual)),
+            position = position_stack(vjust = 0.5),
+            color = "black", size = 3.5) +
+  coord_flip() +
+  labs(x = NULL, y = "Percentual (%)", fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+  theme(legend.position = "bottom")
+ggsave("BARRA CONTAGEM POSITIVAS FILTRADA.jpg", height = 20, width = 15, units = "cm", dpi = 600)
+# ==============================================================================
+medidas <- df_bck %>%
+  group_by(estrategia, moeda) %>%
+  summarise(
+    min = round(min(lucro, na.rm = TRUE), arredondamento),
+    media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    desv_pad = round(sd(lucro, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    max = round(max(lucro, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>%
+  mutate(classificacao = ifelse(mediana < 0, "Negativa", "Positiva") %>% as.factor())
+
+contagens <- medidas %>%
+  group_by(estrategia, classificacao) %>%
+  summarise(frequencia = n(), .groups = "drop") %>%
+  group_by(estrategia) %>%
+  mutate(
+    percentual = frequencia / sum(frequencia) * 100
+  )
+
+ggplot(contagens, aes(x = as.factor(estrategia), y = percentual, fill = classificacao)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = sprintf("%.0f%%", percentual)),
+            position = position_stack(vjust = 0.5),
+            color = "black", size = 3.5) +
+  coord_flip() +
+  labs(x = NULL, y = "Percentual (%)", fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+  theme(legend.position = "bottom")
+ggsave("BARRA CONTAGEM POSITIVAS.jpg", height = 20, width = 15, units = "cm", dpi = 600)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+df$lucroprejuizo_percentual %>% summary()
+df$faixa_lucroprejuizo <- cut(df$lucroprejuizo_percentual, 
+                              breaks = seq(-35, 25, by = 5), 
+                              include.lowest = TRUE, 
+                              right = FALSE)
+
+# Criando os rótulos numerados para manter a ordenação
+levels(df$faixa_lucroprejuizo) <- paste0(sprintf("%02d ", seq_along(levels(df$faixa_lucroprejuizo))), 
+                                         levels(df$faixa_lucroprejuizo))
+
+# Verificando a contagem de cada faixa
+table(df$faixa_lucroprejuizo, df$moeda)
+
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Criando a tabela de contagem
+contagem <- as.data.frame(table(df$faixa_lucroprejuizo, df$moeda))
+colnames(contagem) <- c("faixa_lucroprejuizo", "moeda", "quantidade")
+
+# Criando o gráfico de barras empilhadas
+ggplot(contagem, aes(x = moeda, y = quantidade, fill = faixa_lucroprejuizo)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribuição das Faixas de Lucro/Prejuízo por Moeda",
+       x = "Moeda",
+       y = "Quantidade",
+       fill = "Faixa de Lucro/Prejuízo") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+for (coluna in names(df)){
+  print(paste('*************', coluna, '*************'))
+  classe = df[[coluna]] %>% class()
+  
+  if (classe == 'factor' | classe == 'character'){
+    cont(df, coluna) %>% as.matrix() %>% print()
+  } else {
+    df[[coluna]] %>% summary() %>% print()
+  }
+}
+```
+
+```{r}
+df %>% View()
+df %>% arrange(-lucroprejuizo_percentual) %>% filter(tempo_rodando == 'dia') %>% View()
+```
+
+
+```{r}
+df %>% filter(df$candle_period == '1w' & df$tempo_rodando == 'semana')
+```
+
+
+```{r}
+# library(ggplot2)
+# library(plotly)
+# library(dplyr)
+nome_moeda = 'BNB'
+df_filter = df %>% filter(moeda == nome_moeda, candle_period != '1w')
+ggplot(df_filter, aes(x = lucroprejuizo_percentual, y = estrategia, fill=lucroprejuizo_percentual)) +
+  facet_grid(tempo_rodando~candle_period) +
+  geom_point(shape=21, size=3, alpha=0.5) +
+  # Adicionando as linhas verticais
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed", size = 0.5) +
+  labs(title = nome_moeda)
+
+
+# Convertendo para um gráfico interativo com plotly
+# ggplotly(p)
+
+```
+
+
+```{r}
+df_filter = df 
+ggplot(df_filter, aes(x = lucroprejuizo_percentual, y = estrategia, color=estrategia)) +
+  facet_grid(tempo_rodando~candle_period) +
+  geom_boxplot(alpha=0.8, show.legend=F, width=0.5) +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed", size = 0.5) + 
+  theme_bw()
+
+ggsave("nome_grafico.png", height=20, width=45, units="cm", dpi= 600)
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+

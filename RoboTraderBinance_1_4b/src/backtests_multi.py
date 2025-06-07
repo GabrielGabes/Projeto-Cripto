@@ -41,29 +41,29 @@ moedas = [
     'BCH', # Bitcoin Cash
     'TON', # Toncoin
     'SHIB', # Shiba Inu
-    'HBAR', # Hedera
-    'LTC', # Litecoin
-    'DOT', # Polkadot
-    'XMR', # Monero
-    'DAI', # Dai
-    'PEPE', # Pepe
-    'AAVE', # Aave
-    'UNI', # Uniswap
-    'TAO', # Bittensor
-    'APT', # Aptos
-    'NEAR', # NEAR Protocol
-    'ICP', # Internet Computer
-    'ONDO', # Ondo
-    'ETC', # Ethereum Classic
-    'POL', # POL (prev. MATIC)
-    'USD1', # World Liberty Financial USD
-    'TRUMP', # OFFICIAL TRUMP
-    'VET', # VeChain
-    'RENDER', # Render
-    'FET', # Artificial Superintelligence Alliance
-    'ENA', # Ethena
-    'WLD', # Worldcoin
-    'ARB', # Arbitrum
+    # 'HBAR', # Hedera
+    # 'LTC', # Litecoin
+    # 'DOT', # Polkadot
+    # 'XMR', # Monero
+    # 'DAI', # Dai
+    # 'PEPE', # Pepe
+    # 'AAVE', # Aave
+    # 'UNI', # Uniswap
+    # 'TAO', # Bittensor
+    # 'APT', # Aptos
+    # 'NEAR', # NEAR Protocol
+    # 'ICP', # Internet Computer
+    # 'ONDO', # Ondo
+    # 'ETC', # Ethereum Classic
+    # 'POL', # POL (prev. MATIC)
+    # 'USD1', # World Liberty Financial USD
+    # 'TRUMP', # OFFICIAL TRUMP
+    # 'VET', # VeChain
+    # 'RENDER', # Render
+    # 'FET', # Artificial Superintelligence Alliance
+    # 'ENA', # Ethena
+    # 'WLD', # Worldcoin
+    # 'ARB', # Arbitrum
 
     ## TOP MOEDAS BOAS E FORA DOS HOLOFOTES ##
     'ALGO', # Algorand
