@@ -30,7 +30,7 @@ def getMarketFacilitationIndexTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'volume']
+    required_columns = ['high_price', 'low_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -40,7 +40,7 @@ def getMarketFacilitationIndexTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o Market Facilitation Index (MFI)
-    stock_data['mfi'] = (stock_data['high'] - stock_data['low']) / stock_data['volume']
+    stock_data['mfi'] = (stock_data['high_price'] - stock_data['low_price']) / stock_data['volume']
     
     # Substituir valores infinitos ou NaN (se divisão por zero no volume)
     stock_data['mfi'] = stock_data['mfi'].replace([np.inf, -np.inf], np.nan)

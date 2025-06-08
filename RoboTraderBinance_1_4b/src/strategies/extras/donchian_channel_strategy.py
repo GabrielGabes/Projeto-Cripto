@@ -33,7 +33,7 @@ def getDonchianChannelTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -43,16 +43,16 @@ def getDonchianChannelTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o Canal Donchian
-    stock_data['upper_band'] = stock_data['high'].rolling(window=period).max()
-    stock_data['lower_band'] = stock_data['low'].rolling(window=period).min()
+    stock_data['upper_band'] = stock_data['high_price'].rolling(window=period).max()
+    stock_data['lower_band'] = stock_data['low_price'].rolling(window=period).min()
     stock_data['middle_band'] = (stock_data['upper_band'] + stock_data['lower_band']) / 2
     
     # Calcular canal de saída (para reduzir o risco de perda)
-    stock_data['exit_upper'] = stock_data['high'].rolling(window=exit_period).max()
-    stock_data['exit_lower'] = stock_data['low'].rolling(window=exit_period).min()
+    stock_data['exit_upper'] = stock_data['high_price'].rolling(window=exit_period).max()
+    stock_data['exit_lower'] = stock_data['low_price'].rolling(window=exit_period).min()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_upper = stock_data['upper_band'].iloc[-1]
     current_lower = stock_data['lower_band'].iloc[-1]
     current_middle = stock_data['middle_band'].iloc[-1]
@@ -61,7 +61,7 @@ def getDonchianChannelTradeStrategy(
     current_exit_lower = stock_data['exit_lower'].iloc[-1]
     
     # Verificar valores anteriores para detectar breakouts
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_upper = stock_data['upper_band'].iloc[-2] if len(stock_data) > 1 else current_upper
     prev_lower = stock_data['lower_band'].iloc[-2] if len(stock_data) > 1 else current_lower
     

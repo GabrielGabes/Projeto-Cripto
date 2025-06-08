@@ -32,12 +32,12 @@ def getTEMATradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Função para calcular o TEMA
     def calculate_tema(data, period):
@@ -54,9 +54,9 @@ def getTEMATradeStrategy(
         return tema
     
     # Calcular TEMAs com diferentes períodos
-    stock_data['tema'] = calculate_tema(stock_data['close'], period)
-    stock_data['tema_short'] = calculate_tema(stock_data['close'], short_period)
-    stock_data['tema_long'] = calculate_tema(stock_data['close'], long_period)
+    stock_data['tema'] = calculate_tema(stock_data['close_price'], period)
+    stock_data['tema_short'] = calculate_tema(stock_data['close_price'], short_period)
+    stock_data['tema_long'] = calculate_tema(stock_data['close_price'], long_period)
     
     # Calcular a inclinação (slope) dos TEMAs para determinar tendência
     stock_data['tema_slope'] = stock_data['tema'].diff()
@@ -64,14 +64,14 @@ def getTEMATradeStrategy(
     stock_data['tema_long_slope'] = stock_data['tema_long'].diff()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_tema = stock_data['tema'].iloc[-1]
     current_tema_short = stock_data['tema_short'].iloc[-1]
     current_tema_long = stock_data['tema_long'].iloc[-1]
     current_tema_slope = stock_data['tema_slope'].iloc[-1]
     
     # Valores anteriores para determinar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_tema = stock_data['tema'].iloc[-2] if len(stock_data) > 1 else current_tema
     prev_tema_short = stock_data['tema_short'].iloc[-2] if len(stock_data) > 1 else current_tema_short
     prev_tema_long = stock_data['tema_long'].iloc[-2] if len(stock_data) > 1 else current_tema_long

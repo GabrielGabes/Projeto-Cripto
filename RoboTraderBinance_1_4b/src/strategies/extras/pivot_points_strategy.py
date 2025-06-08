@@ -31,23 +31,23 @@ def getPivotPointsTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close', 'open']
+    required_columns = ['high_price', 'low_price', 'close_price', 'open_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
     
     for col in required_columns:
         if col not in stock_data.columns:
-            if col == 'open':  # 'open' pode ser opcional em alguns casos
-                stock_data['open'] = stock_data['close'].shift(1)
+            if col == 'open_price':  # 'open_price' pode ser opcional em alguns casos
+                stock_data['open_price'] = stock_data['close_price'].shift(1)
             else:
                 raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Adicionar informações sobre o período anterior
-    stock_data['prev_high'] = stock_data['high'].shift(1)
-    stock_data['prev_low'] = stock_data['low'].shift(1)
-    stock_data['prev_close'] = stock_data['close'].shift(1)
-    stock_data['prev_open'] = stock_data['open'].shift(1)
+    stock_data['prev_high'] = stock_data['high_price'].shift(1)
+    stock_data['prev_low'] = stock_data['low_price'].shift(1)
+    stock_data['prev_close'] = stock_data['close_price'].shift(1)
+    stock_data['prev_open'] = stock_data['open_price'].shift(1)
     
     # Calcular os Pivot Points com base no método selecionado
     # 1. Standard Pivot Points
@@ -143,7 +143,7 @@ def getPivotPointsTradeStrategy(
         raise ValueError(f"Método '{method}' não reconhecido. Use 'standard', 'fibonacci', 'woodie', 'camarilla' ou 'demark'.")
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_pp = stock_data['pp'].iloc[-1]
     current_r1 = stock_data['r1'].iloc[-1]
     current_r2 = stock_data['r2'].iloc[-1]
@@ -162,7 +162,7 @@ def getPivotPointsTradeStrategy(
     is_below_s3 = current_close < current_s3
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_pp = stock_data['pp'].iloc[-2] if len(stock_data) > 1 else current_pp
     prev_r1 = stock_data['r1'].iloc[-2] if len(stock_data) > 1 else current_r1
     prev_s1 = stock_data['s1'].iloc[-2] if len(stock_data) > 1 else current_s1

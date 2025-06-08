@@ -31,23 +31,23 @@ def getDetrendedPriceOscillatorTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular a média móvel
     if ma_type.lower() == 'ema':
-        stock_data['ma'] = stock_data['close'].ewm(span=period, adjust=False).mean()
+        stock_data['ma'] = stock_data['close_price'].ewm(span=period, adjust=False).mean()
     else:  # default to SMA
-        stock_data['ma'] = stock_data['close'].rolling(window=period).mean()
+        stock_data['ma'] = stock_data['close_price'].rolling(window=period).mean()
     
     # Calcular o DPO (Detrended Price Oscillator)
     # O DPO é calculado como o preço de fechamento menos a média móvel deslocada por (período / 2 + 1)
     shift_period = int(period / 2 + 1)
-    stock_data['dpo'] = stock_data['close'] - stock_data['ma'].shift(shift_period)
+    stock_data['dpo'] = stock_data['close_price'] - stock_data['ma'].shift(shift_period)
     
     # Calcular média móvel do DPO para suavizar
     stock_data['dpo_ma'] = stock_data['dpo'].rolling(window=period//2).mean()

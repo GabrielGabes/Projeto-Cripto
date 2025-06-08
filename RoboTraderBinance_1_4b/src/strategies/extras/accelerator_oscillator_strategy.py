@@ -34,7 +34,7 @@ def getAcceleratorOscillatorTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    required_cols = ['high', 'low']
+    required_cols = ['high_price', 'low_price']
     for col in required_cols:
         if col not in stock_data.columns:
             raise ValueError(f"Coluna '{col}' não encontrada nos dados")
@@ -44,8 +44,8 @@ def getAcceleratorOscillatorTradeStrategy(
     if len(stock_data) <= min_periods:
         return None  # Dados insuficientes para cálculo
     
-    # Cálculo do preço típico (média do high e low)
-    stock_data['median_price'] = (stock_data['high'] + stock_data['low']) / 2
+    # Cálculo do preço típico (média do high_price e low_price)
+    stock_data['median_price'] = (stock_data['high_price'] + stock_data['low_price']) / 2
     
     # Cálculo do Awesome Oscillator (AO)
     # 1. SMA do preço típico para período rápido

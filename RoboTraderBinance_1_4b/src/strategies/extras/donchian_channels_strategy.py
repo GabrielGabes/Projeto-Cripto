@@ -30,21 +30,21 @@ def getDonchianChannelsTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    if 'high' not in stock_data.columns or 'low' not in stock_data.columns or 'close' not in stock_data.columns:
-        raise ValueError("Colunas 'high', 'low' e 'close' são necessárias para o cálculo do Donchian Channels")
+    if 'high_price' not in stock_data.columns or 'low_price' not in stock_data.columns or 'close_price' not in stock_data.columns:
+        raise ValueError("Colunas 'high_price', 'low_price' e 'close_price' são necessárias para o cálculo do Donchian Channels")
     
     # Verificar se há dados suficientes
     if len(stock_data) <= period:
         return None  # Dados insuficientes para cálculo
     
     # Calcular Donchian Channels
-    stock_data['upper_band'] = stock_data['high'].rolling(window=period).max()
-    stock_data['lower_band'] = stock_data['low'].rolling(window=period).min()
+    stock_data['upper_band'] = stock_data['high_price'].rolling(window=period).max()
+    stock_data['lower_band'] = stock_data['low_price'].rolling(window=period).min()
     stock_data['middle_band'] = (stock_data['upper_band'] + stock_data['lower_band']) / 2
     
     # Cálculo para detectar novos máximos/mínimos no período
-    stock_data['new_high'] = stock_data['high'] >= stock_data['upper_band'].shift(1)
-    stock_data['new_low'] = stock_data['low'] <= stock_data['lower_band'].shift(1)
+    stock_data['new_high'] = stock_data['high_price'] >= stock_data['upper_band'].shift(1)
+    stock_data['new_low'] = stock_data['low_price'] <= stock_data['lower_band'].shift(1)
     
     # Gerar sinais de negociação baseados na estratégia selecionada
     if breakout_mode:
@@ -56,24 +56,24 @@ def getDonchianChannelsTradeStrategy(
     else:
         # Modo de reversão: comprar em mínimos, vender em máximos (contrário ao breakout)
         stock_data['signal'] = np.where(
-            stock_data['close'] <= stock_data['lower_band'], 1,
-            np.where(stock_data['close'] >= stock_data['upper_band'], -1, 0)
+            stock_data['close_price'] <= stock_data['lower_band'], 1,
+            np.where(stock_data['close_price'] >= stock_data['upper_band'], -1, 0)
         )
     
     # Sinais adicionais usando a linha do meio se ativado
     if use_midline:
         # Detectar cruzamentos da linha do meio
         stock_data['mid_cross'] = np.where(
-            (stock_data['close'].shift(1) < stock_data['middle_band'].shift(1)) & 
-            (stock_data['close'] > stock_data['middle_band']), 1,
+            (stock_data['close_price'].shift(1) < stock_data['middle_band'].shift(1)) & 
+            (stock_data['close_price'] > stock_data['middle_band']), 1,
             np.where(
-                (stock_data['close'].shift(1) > stock_data['middle_band'].shift(1)) & 
-                (stock_data['close'] < stock_data['middle_band']), -1, 0
+                (stock_data['close_price'].shift(1) > stock_data['middle_band'].shift(1)) & 
+                (stock_data['close_price'] < stock_data['middle_band']), -1, 0
             )
         )
     
     # Verificar as condições atuais
-    last_close = stock_data['close'].iloc[-1] if not stock_data.empty else 0
+    last_close = stock_data['close_price'].iloc[-1] if not stock_data.empty else 0
     last_upper = stock_data['upper_band'].iloc[-1] if not stock_data.empty else 0
     last_lower = stock_data['lower_band'].iloc[-1] if not stock_data.empty else 0
     last_middle = stock_data['middle_band'].iloc[-1] if not stock_data.empty else 0

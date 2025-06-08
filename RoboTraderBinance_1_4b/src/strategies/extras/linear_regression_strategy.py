@@ -33,12 +33,12 @@ def getLinearRegressionTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Adicionar uma coluna de tempo (índice sequencial)
     stock_data['time_index'] = range(len(stock_data))
@@ -92,14 +92,14 @@ def getLinearRegressionTradeStrategy(
     
     # Calcular regressão linear e canais
     regression_data = calculate_regression(
-        stock_data, period, 'time_index', 'close', deviation_mult
+        stock_data, period, 'time_index', 'close_price', deviation_mult
     )
     
     # Mesclar os resultados com os dados originais
     stock_data = pd.concat([stock_data, regression_data], axis=1)
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_regression = stock_data['regression'].iloc[-1]
     current_upper = stock_data['upper_channel'].iloc[-1]
     current_lower = stock_data['lower_channel'].iloc[-1]
@@ -113,7 +113,7 @@ def getLinearRegressionTradeStrategy(
     is_inside_channel = not is_above_upper and not is_below_lower
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_regression = stock_data['regression'].iloc[-2] if len(stock_data) > 1 else current_regression
     prev_upper = stock_data['upper_channel'].iloc[-2] if len(stock_data) > 1 else current_upper
     prev_lower = stock_data['lower_channel'].iloc[-2] if len(stock_data) > 1 else current_lower

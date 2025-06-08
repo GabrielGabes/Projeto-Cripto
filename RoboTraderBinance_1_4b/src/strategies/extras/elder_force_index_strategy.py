@@ -33,7 +33,7 @@ def getElderForceIndexTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['close', 'volume']
+    required_columns = ['close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -43,7 +43,7 @@ def getElderForceIndexTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o Force Index básico
-    stock_data['price_change'] = stock_data['close'].diff(1)
+    stock_data['price_change'] = stock_data['close_price'].diff(1)
     stock_data['force_index_raw'] = stock_data['price_change'] * stock_data['volume']
     
     # Calcular o Force Index de curto e longo prazo (EMA)

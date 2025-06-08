@@ -36,7 +36,7 @@ def getElderRayTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -47,13 +47,13 @@ def getElderRayTradeStrategy(
     
     # Calcular a média móvel
     if ma_type.lower() == 'ema':
-        stock_data['ma'] = stock_data['close'].ewm(span=period, adjust=False).mean()
+        stock_data['ma'] = stock_data['close_price'].ewm(span=period, adjust=False).mean()
     else:  # default to SMA
-        stock_data['ma'] = stock_data['close'].rolling(window=period).mean()
+        stock_data['ma'] = stock_data['close_price'].rolling(window=period).mean()
     
     # Calcular o Bull Power e Bear Power
-    stock_data['bull_power'] = stock_data['high'] - stock_data['ma']
-    stock_data['bear_power'] = stock_data['low'] - stock_data['ma']
+    stock_data['bull_power'] = stock_data['high_price'] - stock_data['ma']
+    stock_data['bear_power'] = stock_data['low_price'] - stock_data['ma']
     
     # Extrair valores atuais
     current_ma = stock_data['ma'].iloc[-1]

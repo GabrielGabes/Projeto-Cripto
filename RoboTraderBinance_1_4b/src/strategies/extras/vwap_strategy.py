@@ -33,7 +33,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close', 'volume']
+    required_columns = ['high_price', 'low_price', 'close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -50,7 +50,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
             break
     
     # Calcular o preço típico (high + low + close) / 3
-    stock_data['typical_price'] = (stock_data['high'] + stock_data['low'] + stock_data['close']) / 3
+    stock_data['typical_price'] = (stock_data['high_price'] + stock_data['low_price'] + stock_data['close_price']) / 3
     
     # Calcular o valor negociado (preço típico * volume)
     stock_data['tp_volume'] = stock_data['typical_price'] * stock_data['volume']
@@ -105,7 +105,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     stock_data['lower_band'] = stock_data['vwap'] - (stock_data['std_dev'] * std_dev_multiplier)
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_vwap = stock_data['vwap'].iloc[-1]
     current_upper = stock_data['upper_band'].iloc[-1]
     current_lower = stock_data['lower_band'].iloc[-1]
@@ -116,7 +116,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     is_below_lower = current_close < current_lower
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_vwap = stock_data['vwap'].iloc[-2] if len(stock_data) > 1 else current_vwap
     prev_upper = stock_data['upper_band'].iloc[-2] if len(stock_data) > 1 else current_upper
     prev_lower = stock_data['lower_band'].iloc[-2] if len(stock_data) > 1 else current_lower
@@ -130,8 +130,8 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     lower_cross_down = (current_close < current_lower) and (prev_close >= prev_lower)
     
     # Detectar retorno ao VWAP após ter cruzado as bandas
-    return_to_vwap_from_above = vwap_cross_down and (stock_data['close'].shift(1) > stock_data['upper_band'].shift(1)).any()
-    return_to_vwap_from_below = vwap_cross_up and (stock_data['close'].shift(1) < stock_data['lower_band'].shift(1)).any()
+    return_to_vwap_from_above = vwap_cross_down and (stock_data['close_price'].shift(1) > stock_data['upper_band'].shift(1)).any()
+    return_to_vwap_from_below = vwap_cross_up and (stock_data['close_price'].shift(1) < stock_data['lower_band'].shift(1)).any()
     
     # Gerar sinais de compra e venda
     # Comprar:

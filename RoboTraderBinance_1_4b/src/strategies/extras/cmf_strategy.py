@@ -31,7 +31,7 @@ def getCmfTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close', 'volume']
+    required_columns = ['high_price', 'low_price', 'close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -41,9 +41,9 @@ def getCmfTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o Money Flow Multiplier
-    stock_data['mf_multiplier'] = ((stock_data['close'] - stock_data['low']) - 
-                                  (stock_data['high'] - stock_data['close'])) / \
-                                  (stock_data['high'] - stock_data['low'])
+    stock_data['mf_multiplier'] = ((stock_data['close_price'] - stock_data['low_price']) - 
+                                  (stock_data['high_price'] - stock_data['close_price'])) / \
+                                  (stock_data['high_price'] - stock_data['low_price'])
     
     # Lidar com casos onde high == low (evitar divisão por zero)
     stock_data['mf_multiplier'] = stock_data['mf_multiplier'].replace([np.inf, -np.inf], 0)
@@ -70,7 +70,7 @@ def getCmfTradeStrategy(
     
     # Detectar divergências
     if len(stock_data) >= period:
-        price_rising = stock_data['close'].iloc[-1] > stock_data['close'].iloc[-period]
+        price_rising = stock_data['close_price'].iloc[-1] > stock_data['close_price'].iloc[-period]
         cmf_rising = current_cmf > stock_data['cmf'].iloc[-period]
         
         # Divergência: preço sobe mas CMF cai = sinal de venda

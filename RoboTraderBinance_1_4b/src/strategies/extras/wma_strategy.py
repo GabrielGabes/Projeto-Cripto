@@ -32,12 +32,12 @@ def getWMATradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Função para calcular o WMA
     def calculate_wma(data, period):
@@ -48,9 +48,9 @@ def getWMATradeStrategy(
         return wma
     
     # Calcular WMAs com diferentes períodos
-    stock_data['wma'] = calculate_wma(stock_data['close'], period)
-    stock_data['wma_short'] = calculate_wma(stock_data['close'], short_period)
-    stock_data['wma_long'] = calculate_wma(stock_data['close'], long_period)
+    stock_data['wma'] = calculate_wma(stock_data['close_price'], period)
+    stock_data['wma_short'] = calculate_wma(stock_data['close_price'], short_period)
+    stock_data['wma_long'] = calculate_wma(stock_data['close_price'], long_period)
     
     # Calcular a inclinação (slope) das WMAs para determinar tendência
     stock_data['wma_slope'] = stock_data['wma'].diff()
@@ -58,14 +58,14 @@ def getWMATradeStrategy(
     stock_data['wma_long_slope'] = stock_data['wma_long'].diff()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_wma = stock_data['wma'].iloc[-1]
     current_wma_short = stock_data['wma_short'].iloc[-1]
     current_wma_long = stock_data['wma_long'].iloc[-1]
     current_wma_slope = stock_data['wma_slope'].iloc[-1]
     
     # Valores anteriores para determinar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_wma = stock_data['wma'].iloc[-2] if len(stock_data) > 1 else current_wma
     prev_wma_short = stock_data['wma_short'].iloc[-2] if len(stock_data) > 1 else current_wma_short
     prev_wma_long = stock_data['wma_long'].iloc[-2] if len(stock_data) > 1 else current_wma_long

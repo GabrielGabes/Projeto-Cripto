@@ -31,7 +31,7 @@ def getFisherTransformTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low']
+    required_columns = ['high_price', 'low_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -41,7 +41,7 @@ def getFisherTransformTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o valor médio (midpoint) do período
-    stock_data['price_mid'] = (stock_data['high'] + stock_data['low']) / 2
+    stock_data['price_mid'] = (stock_data['high_price'] + stock_data['low_price']) / 2
     
     # Encontrar o máximo e mínimo para o período
     stock_data['period_high'] = stock_data['price_mid'].rolling(window=period).max()

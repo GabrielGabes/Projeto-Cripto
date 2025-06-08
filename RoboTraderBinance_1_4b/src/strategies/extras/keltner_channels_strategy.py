@@ -32,15 +32,15 @@ def getKeltnerChannelsTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    required_cols = ['high', 'low', 'close']
+    required_cols = ['high_price', 'low_price', 'close_price']
     for col in required_cols:
         if col not in stock_data.columns:
             raise ValueError(f"Coluna '{col}' não encontrada nos dados")
     
     # Calcular True Range (TR)
-    stock_data['tr1'] = abs(stock_data['high'] - stock_data['low'])
-    stock_data['tr2'] = abs(stock_data['high'] - stock_data['close'].shift(1))
-    stock_data['tr3'] = abs(stock_data['low'] - stock_data['close'].shift(1))
+    stock_data['tr1'] = abs(stock_data['high_price'] - stock_data['low_price'])
+    stock_data['tr2'] = abs(stock_data['high_price'] - stock_data['close_price'].shift(1))
+    stock_data['tr3'] = abs(stock_data['low_price'] - stock_data['close_price'].shift(1))
     stock_data['true_range'] = stock_data[['tr1', 'tr2', 'tr3']].max(axis=1)
     
     # Calcular Average True Range (ATR)
@@ -51,9 +51,9 @@ def getKeltnerChannelsTradeStrategy(
     
     # Calcular linha central (EMA ou SMA do preço de fechamento)
     if use_ema:
-        stock_data['middle_line'] = stock_data['close'].ewm(span=period, adjust=False).mean()
+        stock_data['middle_line'] = stock_data['close_price'].ewm(span=period, adjust=False).mean()
     else:
-        stock_data['middle_line'] = stock_data['close'].rolling(window=period).mean()
+        stock_data['middle_line'] = stock_data['close_price'].rolling(window=period).mean()
     
     # Calcular bandas superiores e inferiores
     stock_data['upper_band'] = stock_data['middle_line'] + (multiplier * stock_data['atr'])
@@ -61,13 +61,13 @@ def getKeltnerChannelsTradeStrategy(
     
     # Gerar sinais de negociação
     stock_data['signal'] = np.where(
-        stock_data['close'] < stock_data['lower_band'], 1,  # Abaixo da banda inferior: sinal de compra
-        np.where(stock_data['close'] > stock_data['upper_band'], -1,  # Acima da banda superior: sinal de venda
+        stock_data['close_price'] < stock_data['lower_band'], 1,  # Abaixo da banda inferior: sinal de compra
+        np.where(stock_data['close_price'] > stock_data['upper_band'], -1,  # Acima da banda superior: sinal de venda
                  0)  # Entre as bandas: neutro
     )
     
     # Verificar as condições atuais
-    last_close = stock_data['close'].iloc[-1] if not stock_data.empty else 0
+    last_close = stock_data['close_price'].iloc[-1] if not stock_data.empty else 0
     last_middle = stock_data['middle_line'].iloc[-1] if not stock_data.empty else 0
     last_upper = stock_data['upper_band'].iloc[-1] if not stock_data.empty else 0
     last_lower = stock_data['lower_band'].iloc[-1] if not stock_data.empty else 0

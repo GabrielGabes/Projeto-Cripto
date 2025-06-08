@@ -32,15 +32,15 @@ def getChandeMomentumOscillatorTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular variação diária
-    stock_data['price_change'] = stock_data['close'].diff()
+    stock_data['price_change'] = stock_data['close_price'].diff()
     
     # Separar as variações positivas e negativas
     stock_data['gain'] = np.where(stock_data['price_change'] > 0, stock_data['price_change'], 0)
@@ -72,7 +72,7 @@ def getChandeMomentumOscillatorTradeStrategy(
     
     # Detectar divergências
     if len(stock_data) >= period:
-        price_rising = stock_data['close'].iloc[-1] > stock_data['close'].iloc[-period]
+        price_rising = stock_data['close_price'].iloc[-1] > stock_data['close_price'].iloc[-period]
         cmo_rising = current_cmo > stock_data['cmo'].iloc[-period]
         
         # Divergência: preço sobe mas CMO cai = sinal de venda

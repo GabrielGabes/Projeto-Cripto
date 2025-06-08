@@ -31,7 +31,7 @@ def getForceIndexTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['close', 'volume']
+    required_columns = ['close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -41,7 +41,7 @@ def getForceIndexTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular a variação do preço
-    stock_data['price_change'] = stock_data['close'].diff()
+    stock_data['price_change'] = stock_data['close_price'].diff()
     
     # Calcular o Force Index
     stock_data['force_index'] = stock_data['price_change'] * stock_data['volume']
@@ -71,7 +71,7 @@ def getForceIndexTradeStrategy(
     zero_cross_down_long = (current_fi_long < 0) and (prev_fi_long > 0)
     
     # Calcular tendência de curto prazo da média móvel
-    stock_data['ema_13'] = stock_data['close'].ewm(span=13, adjust=False).mean()
+    stock_data['ema_13'] = stock_data['close_price'].ewm(span=13, adjust=False).mean()
     current_ema = stock_data['ema_13'].iloc[-1]
     prev_ema = stock_data['ema_13'].iloc[-2] if len(stock_data) > 1 else current_ema
     ema_trend_up = current_ema > prev_ema

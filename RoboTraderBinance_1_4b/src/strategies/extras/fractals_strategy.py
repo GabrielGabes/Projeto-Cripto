@@ -34,7 +34,7 @@ def getFractalsTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -50,21 +50,21 @@ def getFractalsTradeStrategy(
     # Identificar fractals
     for i in range(window_size // 2, len(stock_data) - window_size // 2):
         # Verificar se o ponto central é o mais alto na janela (fractal de alta)
-        if stock_data['high'].iloc[i] > max(stock_data['high'].iloc[i - window_size // 2:i]) and \
-           stock_data['high'].iloc[i] > max(stock_data['high'].iloc[i + 1:i + window_size // 2 + 1]):
+        if stock_data['high_price'].iloc[i] > max(stock_data['high_price'].iloc[i - window_size // 2:i]) and \
+           stock_data['high_price'].iloc[i] > max(stock_data['high_price'].iloc[i + 1:i + window_size // 2 + 1]):
             stock_data.loc[stock_data.index[i], 'fractal_high'] = True
         
         # Verificar se o ponto central é o mais baixo na janela (fractal de baixa)
-        if stock_data['low'].iloc[i] < min(stock_data['low'].iloc[i - window_size // 2:i]) and \
-           stock_data['low'].iloc[i] < min(stock_data['low'].iloc[i + 1:i + window_size // 2 + 1]):
+        if stock_data['low_price'].iloc[i] < min(stock_data['low_price'].iloc[i - window_size // 2:i]) and \
+           stock_data['low_price'].iloc[i] < min(stock_data['low_price'].iloc[i + 1:i + window_size // 2 + 1]):
             stock_data.loc[stock_data.index[i], 'fractal_low'] = True
     
     # Identificar os valores dos fractals mais recentes
     last_high_fractal_idx = stock_data[stock_data['fractal_high']].index[-1] if any(stock_data['fractal_high']) else None
     last_low_fractal_idx = stock_data[stock_data['fractal_low']].index[-1] if any(stock_data['fractal_low']) else None
     
-    last_high_fractal = stock_data.loc[last_high_fractal_idx, 'high'] if last_high_fractal_idx else None
-    last_low_fractal = stock_data.loc[last_low_fractal_idx, 'low'] if last_low_fractal_idx else None
+    last_high_fractal = stock_data.loc[last_high_fractal_idx, 'high_price'] if last_high_fractal_idx else None
+    last_low_fractal = stock_data.loc[last_low_fractal_idx, 'low_price'] if last_low_fractal_idx else None
     
     # Verificar se temos confirmação
     high_fractal_confirmed = False
@@ -81,10 +81,10 @@ def getFractalsTradeStrategy(
             low_fractal_confirmed = True
     
     # Extrair valor atual
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     
     # Calcular uma média móvel para determinar a tendência
-    stock_data['ma'] = stock_data['close'].rolling(window=period).mean()
+    stock_data['ma'] = stock_data['close_price'].rolling(window=period).mean()
     current_ma = stock_data['ma'].iloc[-1]
     
     # Determinar a tendência

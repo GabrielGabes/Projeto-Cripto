@@ -26,6 +26,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 import traceback
+import io
 
 # import schedule
 
@@ -191,7 +192,9 @@ while True:
         rodar_pesquisas()
         time.sleep(60*5)
     except:
-        mensagem = 'erro fatal! o codigo foi encerrado.\n' + traceback.print_exc()
+        f = io.StringIO()
+        traceback.print_exc(file=f)
+        mensagem = '⚠️ Erro fatal! Código encerrado:\n' + f.getvalue()
         send_telegram_message(mensagem)
         break
 

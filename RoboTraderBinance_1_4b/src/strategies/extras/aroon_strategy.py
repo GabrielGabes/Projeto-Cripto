@@ -32,8 +32,8 @@ def getAroonTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    if 'high' not in stock_data.columns or 'low' not in stock_data.columns:
-        raise ValueError("Colunas 'high' e 'low' são necessárias para o cálculo do Aroon")
+    if 'high_price' not in stock_data.columns or 'low_price' not in stock_data.columns:
+        raise ValueError("Colunas 'high_price' e 'low_price' são necessárias para o cálculo do Aroon")
     
     # Verificar se há dados suficientes
     if len(stock_data) <= period:
@@ -42,8 +42,8 @@ def getAroonTradeStrategy(
     # Calcular Aroon Up e Aroon Down
     # Função para calcular índices dos máximos/mínimos em um período
     def calculate_aroon(data, period):
-        high_idx = data['high'].rolling(window=period).apply(lambda x: x.argmax(), raw=True)
-        low_idx = data['low'].rolling(window=period).apply(lambda x: x.argmin(), raw=True)
+        high_idx = data['high_price'].rolling(window=period).apply(lambda x: x.argmax(), raw=True)
+        low_idx = data['low_price'].rolling(window=period).apply(lambda x: x.argmin(), raw=True)
         
         # Calcular Aroon Up: ((period - períodos desde o máximo) / period) * 100
         aroon_up = ((period - high_idx - 1) / period) * 100

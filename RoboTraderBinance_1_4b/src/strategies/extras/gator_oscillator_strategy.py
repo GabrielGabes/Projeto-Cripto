@@ -42,7 +42,7 @@ def getGatorOscillatorTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low']
+    required_columns = ['high_price', 'low_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -52,7 +52,7 @@ def getGatorOscillatorTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o preço médio
-    stock_data['median_price'] = (stock_data['high'] + stock_data['low']) / 2
+    stock_data['median_price'] = (stock_data['high_price'] + stock_data['low_price']) / 2
     
     # Calcular as linhas do Alligator (médias móveis suavizadas)
     # Jaw (Mandíbula) - Linha Azul - SMMA 13 deslocada 8 períodos para frente

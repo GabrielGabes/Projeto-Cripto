@@ -31,7 +31,7 @@ def getPriceChannelsTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -41,8 +41,8 @@ def getPriceChannelsTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o Price Channel
-    stock_data['upper_channel'] = stock_data['high'].rolling(window=period).max()
-    stock_data['lower_channel'] = stock_data['low'].rolling(window=period).min()
+    stock_data['upper_channel'] = stock_data['high_price'].rolling(window=period).max()
+    stock_data['lower_channel'] = stock_data['low_price'].rolling(window=period).min()
     stock_data['mid_channel'] = (stock_data['upper_channel'] + stock_data['lower_channel']) / 2
     
     # Calcular a largura do canal
@@ -50,7 +50,7 @@ def getPriceChannelsTradeStrategy(
     stock_data['channel_width_pct'] = stock_data['channel_width'] / stock_data['mid_channel'] * 100
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_upper = stock_data['upper_channel'].iloc[-1]
     current_lower = stock_data['lower_channel'].iloc[-1]
     current_mid = stock_data['mid_channel'].iloc[-1]
@@ -72,9 +72,9 @@ def getPriceChannelsTradeStrategy(
     # Verificar os últimos períodos para confirmar breakouts
     for i in range(1, confirm_periods + 1):
         if i < len(stock_data):
-            if stock_data['close'].iloc[-i] > stock_data['upper_channel'].iloc[-i]:
+            if stock_data['close_price'].iloc[-i] > stock_data['upper_channel'].iloc[-i]:
                 confirm_upper_breakout += 1
-            elif stock_data['close'].iloc[-i] < stock_data['lower_channel'].iloc[-i]:
+            elif stock_data['close_price'].iloc[-i] < stock_data['lower_channel'].iloc[-i]:
                 confirm_lower_breakout += 1
     
     # Confirmar breakouts

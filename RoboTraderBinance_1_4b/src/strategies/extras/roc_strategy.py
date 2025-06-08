@@ -34,16 +34,16 @@ def getROCTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular o ROC
     # ROC = ((Preço atual / Preço n períodos atrás) - 1) * 100
-    stock_data['roc'] = ((stock_data['close'] / stock_data['close'].shift(period)) - 1) * 100
+    stock_data['roc'] = ((stock_data['close_price'] / stock_data['close_price'].shift(period)) - 1) * 100
     
     # Calcular média móvel do ROC (linha de sinal)
     stock_data['roc_signal'] = stock_data['roc'].rolling(window=signal_period).mean()
@@ -63,12 +63,12 @@ def getROCTradeStrategy(
     
     # Verificar valores mais antigos para divergências
     if len(stock_data) >= period:
-        period_ago_close = stock_data['close'].iloc[-period]
+        period_ago_close = stock_data['close_price'].iloc[-period]
         period_ago_roc = stock_data['roc'].iloc[-period]
         
         # Divergência: preço sobe mas ROC cai = sinal de venda
         # Divergência: preço cai mas ROC sobe = sinal de compra
-        price_up = stock_data['close'].iloc[-1] > period_ago_close
+        price_up = stock_data['close_price'].iloc[-1] > period_ago_close
         roc_up = current_roc > period_ago_roc
         
         divergence_buy = not price_up and roc_up

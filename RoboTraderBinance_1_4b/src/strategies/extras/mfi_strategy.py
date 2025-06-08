@@ -33,7 +33,7 @@ def getMfiTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close', 'volume']
+    required_columns = ['high_price', 'low_price', 'close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -43,7 +43,7 @@ def getMfiTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o preço típico
-    stock_data['typical_price'] = (stock_data['high'] + stock_data['low'] + stock_data['close']) / 3
+    stock_data['typical_price'] = (stock_data['high_price'] + stock_data['low_price'] + stock_data['close_price']) / 3
     
     # Calcular o fluxo de dinheiro (money flow)
     stock_data['money_flow'] = stock_data['typical_price'] * stock_data['volume']

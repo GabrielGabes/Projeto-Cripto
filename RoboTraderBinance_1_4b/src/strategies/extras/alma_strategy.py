@@ -34,12 +34,12 @@ def getALMATradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular o ALMA
     def calculate_alma(series, period, sigma, offset):
@@ -70,7 +70,7 @@ def getALMATradeStrategy(
         return result
     
     # Aplicar o ALMA aos preços de fechamento
-    alma_values = calculate_alma(stock_data['close'], period, sigma, offset)
+    alma_values = calculate_alma(stock_data['close_price'], period, sigma, offset)
     stock_data['alma'] = alma_values
     
     # Calcular a linha de sinal (média móvel do ALMA)
@@ -80,13 +80,13 @@ def getALMATradeStrategy(
     stock_data['alma_slope'] = stock_data['alma'].diff()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close_price = stock_data['close_price'].iloc[-1]
     current_alma = stock_data['alma'].iloc[-1]
     current_signal = stock_data['alma_signal'].iloc[-1]
     current_slope = stock_data['alma_slope'].iloc[-1]
     
     # Valores anteriores para determinar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close_price = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close_price
     prev_alma = stock_data['alma'].iloc[-2] if len(stock_data) > 1 else current_alma
     prev_signal = stock_data['alma_signal'].iloc[-2] if len(stock_data) > 1 else current_signal
     
@@ -95,8 +95,8 @@ def getALMATradeStrategy(
     
     # Detectar cruzamentos
     # 1. Preço cruza acima/abaixo do ALMA
-    price_cross_up = (current_close > current_alma) and (prev_close <= prev_alma)
-    price_cross_down = (current_close < current_alma) and (prev_close >= prev_alma)
+    price_cross_up = (current_close_price > current_alma) and (prev_close_price <= prev_alma)
+    price_cross_down = (current_close_price < current_alma) and (prev_close_price >= prev_alma)
     
     # 2. ALMA cruza acima/abaixo da linha de sinal
     alma_cross_up = (current_alma > current_signal) and (prev_alma <= prev_signal)
@@ -129,7 +129,7 @@ def getALMATradeStrategy(
         print(f" | Sigma: {sigma}")
         print(f" | Offset: {offset}")
         print(f" | Período do Sinal: {signal_period}")
-        print(f" | Preço Atual: {current_close:.2f}")
+        print(f" | Preço Atual: {current_close_price:.2f}")
         print(f" | ALMA: {current_alma:.2f}")
         print(f" | ALMA Signal: {current_signal:.2f}")
         print(f" | ALMA Slope: {current_slope:.4f}")

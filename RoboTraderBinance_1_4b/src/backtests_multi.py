@@ -26,21 +26,21 @@ df = pd.DataFrame(columns=[
 
 moedas = [
     ## TOP 29 MOEDAS ## 04/06/2025
-    'BTC', # Bitcoin
-    'ETH', # Ethereum
-    'XRP', # XRP
-    'BNB', # BNB
-    'SOL', # Solana
-    'DOGE', # Dogecoin
-    'TRX', # TRON
-    'ADA', # Cardano
-    'SUI', # Sui
-    'LINK', # Chainlink
-    'AVAX', # Avalanche
-    'XLM', # Stellar
-    'BCH', # Bitcoin Cash
-    'TON', # Toncoin
-    'SHIB', # Shiba Inu
+    # 'BTC', # Bitcoin
+    # 'ETH', # Ethereum
+    # 'XRP', # XRP
+    # 'BNB', # BNB
+    # 'SOL', # Solana
+    # 'DOGE', # Dogecoin
+    # 'TRX', # TRON
+    # 'ADA', # Cardano
+    # 'SUI', # Sui
+    # 'LINK', # Chainlink
+    # 'AVAX', # Avalanche
+    # 'XLM', # Stellar
+    # 'BCH', # Bitcoin Cash
+    # 'TON', # Toncoin
+    # 'SHIB', # Shiba Inu
     # 'HBAR', # Hedera
     # 'LTC', # Litecoin
     # 'DOT', # Polkadot
@@ -59,11 +59,11 @@ moedas = [
     # 'USD1', # World Liberty Financial USD
     # 'TRUMP', # OFFICIAL TRUMP
     # 'VET', # VeChain
-    # 'RENDER', # Render
-    # 'FET', # Artificial Superintelligence Alliance
-    # 'ENA', # Ethena
-    # 'WLD', # Worldcoin
-    # 'ARB', # Arbitrum
+    'RENDER', # Render
+    'FET', # Artificial Superintelligence Alliance
+    'ENA', # Ethena
+    'WLD', # Worldcoin
+    'ARB', # Arbitrum
 
     ## TOP MOEDAS BOAS E FORA DOS HOLOFOTES ##
     'ALGO', # Algorand
@@ -96,6 +96,7 @@ periodos_candles = [
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 intervalos_tempo = gerar_domingo_sabado_semanas_ano()
 
+count = 0
 # Rodando simulação para cada moeda
 for moeda in moedas:
 
@@ -108,13 +109,18 @@ for moeda in moedas:
             # Rodando finalmente simulação
             df_temp = backtests_simulador(moeda, periodo, horarios_lista[0], horarios_lista[1])
             df = pd.concat([df, df_temp], axis=0, ignore_index=True) # concatenando no dataframe principal
+    
+    count += 1
+    if count % 2 == 0:
+        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
+        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra_bck.parquet', index=False)
 
 print('*'*50, 'TERMINOU DE RODAR', '*'*50)
 print(df.shape)
 
-# Remove timezone de todas as colunas datetime com tz-aware
-for col in df.select_dtypes(include=['datetimetz']).columns:
-    df[col] = df[col].dt.tz_localize(None)
+# # Remove timezone de todas as colunas datetime com tz-aware # caso for salvar como xlsx
+# for col in df.select_dtypes(include=['datetimetz']).columns:
+#     df[col] = df[col].dt.tz_localize(None)
 
 pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-df.to_excel(pasta_salvar + 'DADOS_SIMULADOS_1semana.xlsx', index=False)
+df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra.parquet', index=False)

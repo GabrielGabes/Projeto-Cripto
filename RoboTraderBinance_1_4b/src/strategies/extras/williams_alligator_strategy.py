@@ -41,7 +41,7 @@ def getWilliamsAlligatorTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -51,7 +51,7 @@ def getWilliamsAlligatorTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o preço médio
-    stock_data['median_price'] = (stock_data['high'] + stock_data['low']) / 2
+    stock_data['median_price'] = (stock_data['high_price'] + stock_data['low_price']) / 2
     
     # Implementar SMMA (Smoothed Moving Average)
     def calculate_smma(data, period):
@@ -88,13 +88,13 @@ def getWilliamsAlligatorTradeStrategy(
     stock_data['lips_shifted'] = stock_data['lips'].shift(-lips_shift)  # Futuro
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_jaw = stock_data['jaw_shifted'].iloc[-1]
     current_teeth = stock_data['teeth_shifted'].iloc[-1]
     current_lips = stock_data['lips_shifted'].iloc[-1]
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_jaw = stock_data['jaw_shifted'].iloc[-2] if len(stock_data) > 1 else current_jaw
     prev_teeth = stock_data['teeth_shifted'].iloc[-2] if len(stock_data) > 1 else current_teeth
     prev_lips = stock_data['lips_shifted'].iloc[-2] if len(stock_data) > 1 else current_lips

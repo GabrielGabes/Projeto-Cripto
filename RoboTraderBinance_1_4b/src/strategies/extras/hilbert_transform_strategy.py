@@ -26,8 +26,8 @@ def getHilbertTransformTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    if 'close' not in stock_data.columns:
-        raise ValueError("Coluna 'close' é necessária para o cálculo do Hilbert Transform")
+    if 'close_price' not in stock_data.columns:
+        raise ValueError("Coluna 'close_price' é necessária para o cálculo do Hilbert Transform")
     
     # Implementação simplificada do Hilbert Transform
     # Nota: O HT real é complexo e geralmente implementado em bibliotecas como TA-Lib
@@ -35,16 +35,16 @@ def getHilbertTransformTradeStrategy(
     # Calculando componentes simulados do HT
     
     # 1. Média dos preços (aproximação da tendência)
-    stock_data['ht_trend'] = stock_data['close'].rolling(window=period).mean()
+    stock_data['ht_trend'] = stock_data['close_price'].rolling(window=period).mean()
     
     # 2. Componente oscilatório (aproximação do sine wave)
-    price_diff = stock_data['close'].diff()
+    price_diff = stock_data['close_price'].diff()
     stock_data['ht_sine'] = np.sin(np.arange(len(stock_data)) * 2 * np.pi / period)
     stock_data['ht_lead_sine'] = np.cos(np.arange(len(stock_data)) * 2 * np.pi / period)
     
     # 3. Detecção de ciclo (simplificada)
-    stock_data['inphase'] = stock_data['close'] * stock_data['ht_sine']
-    stock_data['quadrature'] = stock_data['close'] * stock_data['ht_lead_sine']
+    stock_data['inphase'] = stock_data['close_price'] * stock_data['ht_sine']
+    stock_data['quadrature'] = stock_data['close_price'] * stock_data['ht_lead_sine']
     
     # Suavização dos componentes
     stock_data['smooth_inphase'] = stock_data['inphase'].rolling(window=period).mean()
@@ -62,8 +62,8 @@ def getHilbertTransformTradeStrategy(
     
     # Gerar tendência (aproximada)
     stock_data['ht_trend_signal'] = np.where(
-        stock_data['close'] > stock_data['ht_trend'], 1,
-        np.where(stock_data['close'] < stock_data['ht_trend'], -1, 0)
+        stock_data['close_price'] > stock_data['ht_trend'], 1,
+        np.where(stock_data['close_price'] < stock_data['ht_trend'], -1, 0)
     )
     
     # Verificar as condições atuais

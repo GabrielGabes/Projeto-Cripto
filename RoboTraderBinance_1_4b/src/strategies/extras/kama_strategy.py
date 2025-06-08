@@ -35,18 +35,18 @@ def getKAMATradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular a mudança de preço direta
-    stock_data['price_change'] = stock_data['close'].diff(1)
+    stock_data['price_change'] = stock_data['close_price'].diff(1)
     
     # Calcular o "Efficiency Ratio" (ER)
-    stock_data['direction'] = abs(stock_data['close'] - stock_data['close'].shift(period))
+    stock_data['direction'] = abs(stock_data['close_price'] - stock_data['close_price'].shift(period))
     stock_data['volatility'] = abs(stock_data['price_change']).rolling(window=period).sum()
     stock_data['efficiency_ratio'] = stock_data['direction'] / stock_data['volatility']
     
@@ -67,16 +67,16 @@ def getKAMATradeStrategy(
     # Definir o primeiro valor KAMA
     # Normalmente, seria a média dos primeiros 'period' valores
     if len(stock_data) > period:
-        stock_data.loc[stock_data.index[period-1], 'kama'] = stock_data.loc[stock_data.index[period-1], 'close']
+        stock_data.loc[stock_data.index[period-1], 'kama'] = stock_data.loc[stock_data.index[period-1], 'close_price']
     
     # Calcular o KAMA para os pontos restantes
     for i in range(period, len(stock_data)):
         prev_kama = stock_data.loc[stock_data.index[i-1], 'kama']
         if np.isnan(prev_kama):
-            stock_data.loc[stock_data.index[i], 'kama'] = stock_data.loc[stock_data.index[i], 'close']
+            stock_data.loc[stock_data.index[i], 'kama'] = stock_data.loc[stock_data.index[i], 'close_price']
         else:
             current_sf = stock_data.loc[stock_data.index[i], 'smooth_factor']
-            current_close = stock_data.loc[stock_data.index[i], 'close']
+            current_close = stock_data.loc[stock_data.index[i], 'close_price']
             stock_data.loc[stock_data.index[i], 'kama'] = prev_kama + current_sf * (current_close - prev_kama)
     
     # Calcular o KAMA de sinal (média móvel do KAMA)
@@ -86,14 +86,14 @@ def getKAMATradeStrategy(
     stock_data['kama_slope'] = stock_data['kama'].diff()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_kama = stock_data['kama'].iloc[-1]
     current_kama_signal = stock_data['kama_signal'].iloc[-1]
     current_kama_slope = stock_data['kama_slope'].iloc[-1]
     current_er = stock_data['efficiency_ratio'].iloc[-1]
     
     # Valores anteriores para determinar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_kama = stock_data['kama'].iloc[-2] if len(stock_data) > 1 else current_kama
     prev_kama_signal = stock_data['kama_signal'].iloc[-2] if len(stock_data) > 1 else current_kama_signal
     

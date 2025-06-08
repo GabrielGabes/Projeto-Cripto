@@ -33,7 +33,7 @@ def getOBVTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['close', 'volume']
+    required_columns = ['close_price', 'volume']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -43,7 +43,7 @@ def getOBVTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular OBV
-    stock_data['price_change'] = stock_data['close'].diff()
+    stock_data['price_change'] = stock_data['close_price'].diff()
     stock_data['obv'] = 0
     
     # Inicialização do OBV
@@ -83,7 +83,7 @@ def getOBVTradeStrategy(
     cross_below = (current_obv < current_obv_signal) and (stock_data['obv'].iloc[-2] >= stock_data['obv_signal'].iloc[-2])
     
     # Tendência de divergência entre preço e OBV
-    price_trend_up = stock_data['close'].iloc[-1] > stock_data['close'].iloc[-period]
+    price_trend_up = stock_data['close_price'].iloc[-1] > stock_data['close_price'].iloc[-period]
     obv_trend_up = current_obv > stock_data['obv'].iloc[-period]
     
     # Divergência: preço sobe mas OBV cai = sinal de venda

@@ -38,7 +38,7 @@ def getATRTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     for col in required_columns:
         if col not in stock_data.columns:
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
@@ -48,9 +48,9 @@ def getATRTradeStrategy(
     
     # Calcular o ATR
     # Primeiro, calcular o True Range (TR)
-    stock_data['high_low'] = stock_data['high'] - stock_data['low']
-    stock_data['high_close'] = np.abs(stock_data['high'] - stock_data['close'].shift(1))
-    stock_data['low_close'] = np.abs(stock_data['low'] - stock_data['close'].shift(1))
+    stock_data['high_low'] = stock_data['high_price'] - stock_data['low_price']
+    stock_data['high_close'] = np.abs(stock_data['high_price'] - stock_data['close_price'].shift(1))
+    stock_data['low_close'] = np.abs(stock_data['low_price'] - stock_data['close_price'].shift(1))
     stock_data['tr'] = stock_data[['high_low', 'high_close', 'low_close']].max(axis=1)
     
     # Em seguida, calcular o ATR como média móvel do TR
@@ -60,7 +60,7 @@ def getATRTradeStrategy(
     stock_data['atr_change'] = stock_data['atr'].pct_change(periods=1) * 100
     
     # Calcular a direção recente do preço
-    stock_data['price_direction'] = stock_data['close'].diff(periods=lookback_period)
+    stock_data['price_direction'] = stock_data['close_price'].diff(periods=lookback_period)
     
     # Determinar os sinais de compra e venda
     # Compra: ATR aumenta acima do limite e preço está subindo

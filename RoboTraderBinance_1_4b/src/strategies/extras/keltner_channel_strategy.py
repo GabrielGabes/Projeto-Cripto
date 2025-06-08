@@ -35,7 +35,7 @@ def getKeltnerChannelTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -45,13 +45,13 @@ def getKeltnerChannelTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular a EMA para a linha central
-    stock_data['ema'] = stock_data['close'].ewm(span=period, adjust=False).mean()
+    stock_data['ema'] = stock_data['close_price'].ewm(span=period, adjust=False).mean()
     
     # Calcular o ATR
     # Primeiro, calcular o True Range (TR)
-    stock_data['high_low'] = stock_data['high'] - stock_data['low']
-    stock_data['high_close'] = np.abs(stock_data['high'] - stock_data['close'].shift(1))
-    stock_data['low_close'] = np.abs(stock_data['low'] - stock_data['close'].shift(1))
+    stock_data['high_low'] = stock_data['high_price'] - stock_data['low_price']
+    stock_data['high_close'] = np.abs(stock_data['high_price'] - stock_data['close_price'].shift(1))
+    stock_data['low_close'] = np.abs(stock_data['low_price'] - stock_data['close_price'].shift(1))
     stock_data['tr'] = stock_data[['high_low', 'high_close', 'low_close']].max(axis=1)
     
     # Em seguida, calcular o ATR como média móvel do TR
@@ -62,7 +62,7 @@ def getKeltnerChannelTradeStrategy(
     stock_data['lower_band'] = stock_data['ema'] - (multiplier * stock_data['atr'])
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_ema = stock_data['ema'].iloc[-1]
     current_upper = stock_data['upper_band'].iloc[-1]
     current_lower = stock_data['lower_band'].iloc[-1]
@@ -74,7 +74,7 @@ def getKeltnerChannelTradeStrategy(
     is_inside_channel = not is_above_upper and not is_below_lower
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_upper = stock_data['upper_band'].iloc[-2] if len(stock_data) > 1 else current_upper
     prev_lower = stock_data['lower_band'].iloc[-2] if len(stock_data) > 1 else current_lower
     

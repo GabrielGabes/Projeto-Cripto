@@ -32,18 +32,18 @@ def getMovingAverageEnvelopeTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular a média móvel
     if ma_type.lower() == 'ema':
-        stock_data['ma'] = stock_data['close'].ewm(span=period, adjust=False).mean()
+        stock_data['ma'] = stock_data['close_price'].ewm(span=period, adjust=False).mean()
     else:  # default to SMA
-        stock_data['ma'] = stock_data['close'].rolling(window=period).mean()
+        stock_data['ma'] = stock_data['close_price'].rolling(window=period).mean()
     
     # Calcular as bandas superior e inferior do envelope
     envelope_factor = envelope_percentage / 100.0
@@ -51,7 +51,7 @@ def getMovingAverageEnvelopeTradeStrategy(
     stock_data['lower_envelope'] = stock_data['ma'] * (1 - envelope_factor)
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_ma = stock_data['ma'].iloc[-1]
     current_upper = stock_data['upper_envelope'].iloc[-1]
     current_lower = stock_data['lower_envelope'].iloc[-1]
@@ -62,7 +62,7 @@ def getMovingAverageEnvelopeTradeStrategy(
     is_inside_envelope = not is_above_upper and not is_below_lower
     
     # Verificar valores anteriores para detectar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_upper = stock_data['upper_envelope'].iloc[-2] if len(stock_data) > 1 else current_upper
     prev_lower = stock_data['lower_envelope'].iloc[-2] if len(stock_data) > 1 else current_lower
     

@@ -34,7 +34,7 @@ def getVIDYATradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se a coluna de preço existe
-    price_col = 'close' if use_close else 'open'
+    price_col = 'close_price' if use_close else 'open_price'
     if price_col not in stock_data.columns:
         raise ValueError(f"Coluna '{price_col}' não encontrada nos dados")
     

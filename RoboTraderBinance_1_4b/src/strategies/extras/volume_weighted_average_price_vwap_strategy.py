@@ -30,7 +30,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    required_cols = ['high', 'low', 'close', 'volume', 'date']
+    required_cols = ['high_price', 'low_price', 'close_price', 'volume', 'date']
     for col in required_cols:
         if col not in stock_data.columns:
             raise ValueError(f"Coluna '{col}' não encontrada nos dados")
@@ -44,7 +44,7 @@ def getVolumeWeightedAveragePriceTradeStrategy(
         stock_data['day'] = stock_data['date'].dt.date
     
     # Calcular preço típico (TP): (high + low + close) / 3
-    stock_data['typical_price'] = (stock_data['high'] + stock_data['low'] + stock_data['close']) / 3
+    stock_data['typical_price'] = (stock_data['high_price'] + stock_data['low_price'] + stock_data['close_price']) / 3
     
     # Calcular VWAP
     if reset_daily:
@@ -78,13 +78,13 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     
     # Gerar sinais de negociação
     stock_data['position'] = np.where(
-        stock_data['close'] < stock_data['lower_band'], 1,  # Abaixo da banda inferior: sinal de compra
-        np.where(stock_data['close'] > stock_data['upper_band'], -1,  # Acima da banda superior: sinal de venda
+        stock_data['close_price'] < stock_data['lower_band'], 1,  # Abaixo da banda inferior: sinal de compra
+        np.where(stock_data['close_price'] > stock_data['upper_band'], -1,  # Acima da banda superior: sinal de venda
                  0)  # Entre as bandas: neutro
     )
     
     # Verificar a última posição
-    last_close = stock_data['close'].iloc[-1] if not stock_data.empty else 0
+    last_close = stock_data['close_price'].iloc[-1] if not stock_data.empty else 0
     last_vwap = stock_data['vwap'].iloc[-1] if not stock_data.empty else 0
     last_upper = stock_data['upper_band'].iloc[-1] if not stock_data.empty else 0
     last_lower = stock_data['lower_band'].iloc[-1] if not stock_data.empty else 0

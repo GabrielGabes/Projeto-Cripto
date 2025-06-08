@@ -33,7 +33,7 @@ def getAwesomeOscillatorTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low']
+    required_columns = ['high_price', 'low_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -43,7 +43,7 @@ def getAwesomeOscillatorTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular o ponto médio dos preços
-    stock_data['midpoint'] = (stock_data['high'] + stock_data['low']) / 2
+    stock_data['midpoint'] = (stock_data['high_price'] + stock_data['low_price']) / 2
     
     # Calcular as médias móveis rápida e lenta do ponto médio
     stock_data['ao_fast'] = stock_data['midpoint'].rolling(window=fast_period).mean()

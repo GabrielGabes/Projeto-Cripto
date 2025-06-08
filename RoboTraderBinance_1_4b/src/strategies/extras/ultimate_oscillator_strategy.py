@@ -45,7 +45,7 @@ def getUltimateOscillatorTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -55,19 +55,19 @@ def getUltimateOscillatorTradeStrategy(
             raise ValueError(f"Coluna {col} não encontrada nos dados.")
     
     # Calcular True Range (TR) e Buying Pressure (BP)
-    stock_data['prev_close'] = stock_data['close'].shift(1)
+    stock_data['prev_close'] = stock_data['close_price'].shift(1)
     
     # True Range = max(high, prev_close) - min(low, prev_close)
     stock_data['tr'] = stock_data.apply(
-        lambda x: max(x['high'], x['prev_close']) - min(x['low'], x['prev_close']) 
-        if not pd.isna(x['prev_close']) else x['high'] - x['low'],
+        lambda x: max(x['high_price'], x['prev_close']) - min(x['low_price'], x['prev_close']) 
+        if not pd.isna(x['prev_close']) else x['high_price'] - x['low_price'],
         axis=1
     )
     
     # Buying Pressure = close - min(low, prev_close)
     stock_data['bp'] = stock_data.apply(
-        lambda x: x['close'] - min(x['low'], x['prev_close'])
-        if not pd.isna(x['prev_close']) else x['close'] - x['low'],
+        lambda x: x['close_price'] - min(x['low_price'], x['prev_close'])
+        if not pd.isna(x['prev_close']) else x['close_price'] - x['low_price'],
         axis=1
     )
     
@@ -90,7 +90,7 @@ def getUltimateOscillatorTradeStrategy(
     
     # Extrair valores atuais
     current_uo = stock_data['uo'].iloc[-1]
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     
     # Valores anteriores para determinar tendências e divergências
     prev_uo = stock_data['uo'].iloc[-2] if len(stock_data) > 1 else current_uo
@@ -101,7 +101,7 @@ def getUltimateOscillatorTradeStrategy(
         
         # Encontrar os mínimos e máximos locais nos últimos 'lookback' períodos
         if lookback < len(stock_data):
-            recent_prices = stock_data['close'].iloc[-lookback:]
+            recent_prices = stock_data['close_price'].iloc[-lookback:]
             recent_uo = stock_data['uo'].iloc[-lookback:]
             
             # Verificar se existe divergência bullish: preço faz novos mínimos enquanto UO não

@@ -30,12 +30,12 @@ def getHullMovingAverageTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Função para calcular o HMA
     def calculate_hma(data, n):
@@ -57,22 +57,22 @@ def getHullMovingAverageTradeStrategy(
         return hma
     
     # Calcular o HMA principal e o HMA rápido
-    stock_data['hma'] = calculate_hma(stock_data['close'], period)
-    stock_data['hma_fast'] = calculate_hma(stock_data['close'], fast_period)
+    stock_data['hma'] = calculate_hma(stock_data['close_price'], period)
+    stock_data['hma_fast'] = calculate_hma(stock_data['close_price'], fast_period)
     
     # Calcular a direção do HMA (slope)
     stock_data['hma_slope'] = stock_data['hma'].diff()
     stock_data['hma_fast_slope'] = stock_data['hma_fast'].diff()
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_hma = stock_data['hma'].iloc[-1]
     current_hma_fast = stock_data['hma_fast'].iloc[-1]
     current_hma_slope = stock_data['hma_slope'].iloc[-1]
     current_hma_fast_slope = stock_data['hma_fast_slope'].iloc[-1]
     
     # Valores anteriores para determinar cruzamentos
-    prev_close = stock_data['close'].iloc[-2] if len(stock_data) > 1 else current_close
+    prev_close = stock_data['close_price'].iloc[-2] if len(stock_data) > 1 else current_close
     prev_hma = stock_data['hma'].iloc[-2] if len(stock_data) > 1 else current_hma
     prev_hma_fast = stock_data['hma_fast'].iloc[-2] if len(stock_data) > 1 else current_hma_fast
     

@@ -34,16 +34,16 @@ def getPPOTradeStrategy(
     """
     stock_data = stock_data.copy()
     
-    # Verificar se temos a coluna 'close'
-    if 'close' not in stock_data.columns:
+    # Verificar se temos a coluna 'close_price'
+    if 'close_price' not in stock_data.columns:
         # Tentar converter para minúsculas
         stock_data.columns = [col.lower() for col in stock_data.columns]
-        if 'close' not in stock_data.columns:
-            raise ValueError("Coluna 'close' não encontrada nos dados.")
+        if 'close_price' not in stock_data.columns:
+            raise ValueError("Coluna 'close_price' não encontrada nos dados.")
     
     # Calcular EMA rápida e lenta
-    stock_data['ema_fast'] = stock_data['close'].ewm(span=fast_period, adjust=False).mean()
-    stock_data['ema_slow'] = stock_data['close'].ewm(span=slow_period, adjust=False).mean()
+    stock_data['ema_fast'] = stock_data['close_price'].ewm(span=fast_period, adjust=False).mean()
+    stock_data['ema_slow'] = stock_data['close_price'].ewm(span=slow_period, adjust=False).mean()
     
     # Calcular PPO [(EMA_Rápida - EMA_Lenta) / EMA_Lenta * 100]
     stock_data['ppo'] = ((stock_data['ema_fast'] - stock_data['ema_slow']) / stock_data['ema_slow']) * 100
@@ -66,12 +66,12 @@ def getPPOTradeStrategy(
     
     # Verificar valores mais antigos para divergências
     if len(stock_data) >= period:
-        period_ago_close = stock_data['close'].iloc[-period]
+        period_ago_close = stock_data['close_price'].iloc[-period]
         period_ago_ppo = stock_data['ppo'].iloc[-period]
         
         # Divergência: preço sobe mas PPO cai = sinal de venda
         # Divergência: preço cai mas PPO sobe = sinal de compra
-        price_up = stock_data['close'].iloc[-1] > period_ago_close
+        price_up = stock_data['close_price'].iloc[-1] > period_ago_close
         ppo_up = current_ppo > period_ago_ppo
         
         divergence_buy = not price_up and ppo_up

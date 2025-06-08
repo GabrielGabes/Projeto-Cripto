@@ -34,7 +34,7 @@ def getIchimokuCloudTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se as colunas necessárias existem
-    required_cols = ['high', 'low', 'close']
+    required_cols = ['high_price', 'low_price', 'close_price']
     for col in required_cols:
         if col not in stock_data.columns:
             raise ValueError(f"Coluna '{col}' não encontrada nos dados")
@@ -49,19 +49,19 @@ def getIchimokuCloudTradeStrategy(
         return (high.rolling(window=period).max() + low.rolling(window=period).min()) / 2
     
     # Cálculo do Tenkan-sen (Linha de Conversão)
-    stock_data['tenkan_sen'] = donchian(stock_data['high'], stock_data['low'], tenkan_period)
+    stock_data['tenkan_sen'] = donchian(stock_data['high_price'], stock_data['low_price'], tenkan_period)
     
     # Cálculo do Kijun-sen (Linha Base)
-    stock_data['kijun_sen'] = donchian(stock_data['high'], stock_data['low'], kijun_period)
+    stock_data['kijun_sen'] = donchian(stock_data['high_price'], stock_data['low_price'], kijun_period)
     
     # Cálculo do Senkou Span A (Primeira linha da nuvem)
     stock_data['senkou_span_a'] = ((stock_data['tenkan_sen'] + stock_data['kijun_sen']) / 2).shift(displacement)
     
     # Cálculo do Senkou Span B (Segunda linha da nuvem)
-    stock_data['senkou_span_b'] = donchian(stock_data['high'], stock_data['low'], senkou_span_b_period).shift(displacement)
+    stock_data['senkou_span_b'] = donchian(stock_data['high_price'], stock_data['low_price'], senkou_span_b_period).shift(displacement)
     
     # Cálculo do Chikou Span (Linha de Atraso)
-    stock_data['chikou_span'] = stock_data['close'].shift(-displacement)
+    stock_data['chikou_span'] = stock_data['close_price'].shift(-displacement)
     
     # Detectar cruzamento TK (Tenkan-sen x Kijun-sen)
     stock_data['tk_cross'] = np.where(
@@ -75,16 +75,16 @@ def getIchimokuCloudTradeStrategy(
     
     # Identificar a posição do preço em relação à nuvem
     stock_data['price_above_cloud'] = np.where(
-        stock_data['close'] > stock_data['senkou_span_a'], 1,
-        np.where(stock_data['close'] < stock_data['senkou_span_a'], -1, 0)
+        stock_data['close_price'] > stock_data['senkou_span_a'], 1,
+        np.where(stock_data['close_price'] < stock_data['senkou_span_a'], -1, 0)
     )
     
     stock_data['cloud_breakout'] = np.where(
-        (stock_data['close'] > stock_data['senkou_span_a']) & 
-        (stock_data['close'] > stock_data['senkou_span_b']), 1,
+        (stock_data['close_price'] > stock_data['senkou_span_a']) & 
+        (stock_data['close_price'] > stock_data['senkou_span_b']), 1,
         np.where(
-            (stock_data['close'] < stock_data['senkou_span_a']) & 
-            (stock_data['close'] < stock_data['senkou_span_b']), -1, 0
+            (stock_data['close_price'] < stock_data['senkou_span_a']) & 
+            (stock_data['close_price'] < stock_data['senkou_span_b']), -1, 0
         )
     )
     
@@ -95,7 +95,7 @@ def getIchimokuCloudTradeStrategy(
     )
     
     # Verificar as condições atuais
-    last_close = stock_data['close'].iloc[-1] if not stock_data.empty else 0
+    last_close = stock_data['close_price'].iloc[-1] if not stock_data.empty else 0
     last_tenkan = stock_data['tenkan_sen'].iloc[-1] if not stock_data.empty else 0
     last_kijun = stock_data['kijun_sen'].iloc[-1] if not stock_data.empty else 0
     last_senkou_a = stock_data['senkou_span_a'].iloc[-1] if not stock_data.empty else 0

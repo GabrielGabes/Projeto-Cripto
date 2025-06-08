@@ -35,7 +35,7 @@ def getPSARTradeStrategy(
     stock_data = stock_data.copy()
     
     # Verificar se temos os dados necessários
-    required_columns = ['high', 'low', 'close']
+    required_columns = ['high_price', 'low_price', 'close_price']
     
     # Converter nomes de colunas para minúsculas se necessário
     stock_data.columns = [col.lower() for col in stock_data.columns]
@@ -53,14 +53,14 @@ def getPSARTradeStrategy(
     # Determinar tendência inicial
     # Vamos usar a inclinação dos primeiros preços para determinar a tendência inicial
     if len(stock_data) > 1:
-        if stock_data['close'].iloc[1] > stock_data['close'].iloc[0]:
+        if stock_data['close_price'].iloc[1] > stock_data['close_price'].iloc[0]:
             initial_trend = 1  # Tendência de alta
-            stock_data.loc[1, 'psar'] = stock_data['low'].iloc[0]  # PSAR inicial abaixo do primeiro low
-            stock_data.loc[1, 'ep'] = stock_data['high'].iloc[1]  # Primeiro EP é o high atual
+            stock_data.loc[1, 'psar'] = stock_data['low_price'].iloc[0]  # PSAR inicial abaixo do primeiro low
+            stock_data.loc[1, 'ep'] = stock_data['high_price'].iloc[1]  # Primeiro EP é o high atual
         else:
             initial_trend = -1  # Tendência de baixa
-            stock_data.loc[1, 'psar'] = stock_data['high'].iloc[0]  # PSAR inicial acima do primeiro high
-            stock_data.loc[1, 'ep'] = stock_data['low'].iloc[1]  # Primeiro EP é o low atual
+            stock_data.loc[1, 'psar'] = stock_data['high_price'].iloc[0]  # PSAR inicial acima do primeiro high
+            stock_data.loc[1, 'ep'] = stock_data['low_price'].iloc[1]  # Primeiro EP é o low atual
         
         stock_data.loc[1, 'trend'] = initial_trend
     
@@ -77,19 +77,19 @@ def getPSARTradeStrategy(
         # Tendência de alta
         if prev_trend == 1:
             # Limitar o PSAR pelos mínimos anteriores
-            current_psar = min(current_psar, stock_data['low'].iloc[i-2], stock_data['low'].iloc[i-1])
+            current_psar = min(current_psar, stock_data['low_price'].iloc[i-2], stock_data['low_price'].iloc[i-1])
             
             # Verificar se o PSAR é ultrapassado (tendência invertida)
-            if current_psar > stock_data['low'].iloc[i]:
+            if current_psar > stock_data['low_price'].iloc[i]:
                 current_trend = -1
-                current_psar = max(stock_data['high'].iloc[i-2], stock_data['high'].iloc[i-1], stock_data['high'].iloc[i])
-                current_ep = stock_data['low'].iloc[i]
+                current_psar = max(stock_data['high_price'].iloc[i-2], stock_data['high_price'].iloc[i-1], stock_data['high_price'].iloc[i])
+                current_ep = stock_data['low_price'].iloc[i]
                 current_af = af_start
             else:
                 current_trend = 1
                 # Atualizar EP se tiver novo máximo
-                if stock_data['high'].iloc[i] > prev_ep:
-                    current_ep = stock_data['high'].iloc[i]
+                if stock_data['high_price'].iloc[i] > prev_ep:
+                    current_ep = stock_data['high_price'].iloc[i]
                     current_af = min(prev_af + af_increment, af_max)
                 else:
                     current_ep = prev_ep
@@ -98,19 +98,19 @@ def getPSARTradeStrategy(
         # Tendência de baixa
         else:
             # Limitar o PSAR pelos máximos anteriores
-            current_psar = max(current_psar, stock_data['high'].iloc[i-2], stock_data['high'].iloc[i-1])
+            current_psar = max(current_psar, stock_data['high_price'].iloc[i-2], stock_data['high_price'].iloc[i-1])
             
             # Verificar se o PSAR é ultrapassado (tendência invertida)
-            if current_psar < stock_data['high'].iloc[i]:
+            if current_psar < stock_data['high_price'].iloc[i]:
                 current_trend = 1
-                current_psar = min(stock_data['low'].iloc[i-2], stock_data['low'].iloc[i-1], stock_data['low'].iloc[i])
-                current_ep = stock_data['high'].iloc[i]
+                current_psar = min(stock_data['low_price'].iloc[i-2], stock_data['low_price'].iloc[i-1], stock_data['low_price'].iloc[i])
+                current_ep = stock_data['high_price'].iloc[i]
                 current_af = af_start
             else:
                 current_trend = -1
                 # Atualizar EP se tiver novo mínimo
-                if stock_data['low'].iloc[i] < prev_ep:
-                    current_ep = stock_data['low'].iloc[i]
+                if stock_data['low_price'].iloc[i] < prev_ep:
+                    current_ep = stock_data['low_price'].iloc[i]
                     current_af = min(prev_af + af_increment, af_max)
                 else:
                     current_ep = prev_ep
@@ -123,7 +123,7 @@ def getPSARTradeStrategy(
         stock_data.loc[stock_data.index[i], 'ep'] = current_ep
     
     # Extrair valores atuais
-    current_close = stock_data['close'].iloc[-1]
+    current_close = stock_data['close_price'].iloc[-1]
     current_psar = stock_data['psar'].iloc[-1]
     current_trend = stock_data['trend'].iloc[-1]
     
