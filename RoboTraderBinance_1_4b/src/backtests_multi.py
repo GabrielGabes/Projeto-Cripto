@@ -25,40 +25,40 @@ df = pd.DataFrame(columns=[
     ])
 
 moedas = [
-    ## TOP 29 MOEDAS ## 04/06/2025
-    # 'BTC', # Bitcoin
-    # 'ETH', # Ethereum
-    # 'XRP', # XRP
-    # 'BNB', # BNB
-    # 'SOL', # Solana
-    # 'DOGE', # Dogecoin
-    # 'TRX', # TRON
-    # 'ADA', # Cardano
-    # 'SUI', # Sui
-    # 'LINK', # Chainlink
-    # 'AVAX', # Avalanche
-    # 'XLM', # Stellar
-    # 'BCH', # Bitcoin Cash
-    # 'TON', # Toncoin
-    # 'SHIB', # Shiba Inu
-    # 'HBAR', # Hedera
-    # 'LTC', # Litecoin
-    # 'DOT', # Polkadot
-    # 'XMR', # Monero
-    # 'DAI', # Dai
-    # 'PEPE', # Pepe
-    # 'AAVE', # Aave
-    # 'UNI', # Uniswap
-    # 'TAO', # Bittensor
-    # 'APT', # Aptos
-    # 'NEAR', # NEAR Protocol
-    # 'ICP', # Internet Computer
-    # 'ONDO', # Ondo
-    # 'ETC', # Ethereum Classic
-    # 'POL', # POL (prev. MATIC)
-    # 'USD1', # World Liberty Financial USD
-    # 'TRUMP', # OFFICIAL TRUMP
-    # 'VET', # VeChain
+    # TOP 29 MOEDAS ## 04/06/2025
+    'BTC', # Bitcoin
+    'ETH', # Ethereum
+    'XRP', # XRP
+    'BNB', # BNB
+    'SOL', # Solana
+    'DOGE', # Dogecoin
+    'TRX', # TRON
+    'ADA', # Cardano
+    'SUI', # Sui
+    'LINK', # Chainlink
+    'AVAX', # Avalanche
+    'XLM', # Stellar
+    'BCH', # Bitcoin Cash
+    'TON', # Toncoin
+    'SHIB', # Shiba Inu
+    'HBAR', # Hedera
+    'LTC', # Litecoin
+    'DOT', # Polkadot
+    'XMR', # Monero
+    'DAI', # Dai
+    'PEPE', # Pepe
+    'AAVE', # Aave
+    'UNI', # Uniswap
+    'TAO', # Bittensor
+    'APT', # Aptos
+    'NEAR', # NEAR Protocol
+    'ICP', # Internet Computer
+    'ONDO', # Ondo
+    'ETC', # Ethereum Classic
+    'POL', # POL (prev. MATIC)
+    'USD1', # World Liberty Financial USD
+    'TRUMP', # OFFICIAL TRUMP
+    'VET', # VeChain
     'RENDER', # Render
     'FET', # Artificial Superintelligence Alliance
     'ENA', # Ethena
@@ -94,7 +94,8 @@ periodos_candles = [
             ]
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
-intervalos_tempo = gerar_domingo_sabado_semanas_ano()
+# intervalos_tempo = gerar_domingo_sabado_semanas_ano()
+intervalos_tempo = [['01/01/2025 00:00', '08/06/2025 00:00']]
 
 count = 0
 # Rodando simulação para cada moeda
@@ -113,7 +114,7 @@ for moeda in moedas:
     count += 1
     if count % 2 == 0:
         pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra_bck.parquet', index=False)
+        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250806_1h.parquet', index=False)
 
 print('*'*50, 'TERMINOU DE RODAR', '*'*50)
 print(df.shape)
@@ -123,4 +124,4 @@ print(df.shape)
 #     df[col] = df[col].dt.tz_localize(None)
 
 pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra.parquet', index=False)
+df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250806_1h.parquet', index=False)

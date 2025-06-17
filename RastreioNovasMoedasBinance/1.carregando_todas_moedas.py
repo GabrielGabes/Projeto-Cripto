@@ -1,9 +1,12 @@
 from binance.client import Client
-import os
 from dotenv import load_dotenv
 
 import pandas as pd
 import numpy as np
+
+import os
+import time
+import traceback
 
 # Carregar chaves da API da Binance (opcional, só é necessário para chamadas privadas)
 load_dotenv()
@@ -22,8 +25,12 @@ for item in tickers:
     if 'USDT' == item['symbol'][-4:]:
     # if 'USDT' in item['symbol'][-4:]:
         symbol_set.append(item['symbol'].replace('USDT',''))
-symbol_set
+print(symbol_set)
 
 df = pd.DataFrame(symbol_set, columns=['moeda'])
-df['data'] = '08/06/2025 01:06'
-df.to_parquet('dados_historicos', index=False)
+df['data_atual'] = pd.Timestamp.now()
+
+
+caminho_diretorio = os.path.dirname(os.path.abspath(__file__))
+caminho_arquivo = os.path.join(caminho_diretorio, 'dados_historicos.parquet')
+df.to_parquet(caminho_arquivo, index=False)

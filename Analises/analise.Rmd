@@ -46,17 +46,12 @@ normalize_vector_names <- function(v) {
 ```
 
 ```{r}
-df = read_excel("C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/DADOS_SIMULADOS_1semana.xlsx")
-df = normalize_column_names(df)
 
 library(arrow)
-df2 = read_parquet("C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/DADOS_SIMULADOS_1semana_extra_bck.parquet")
-df2 = normalize_column_names(df2)
+df = read_parquet("C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/DADOS_SIMULADOS_1semana_1h_definitivos.parquet")
+df = normalize_column_names(df)
+df = df %>% mutate(moeda_estrategia = paste0(moeda, '\n', estrategia))
 
-df %>% dim()
-df2 %>% dim()
-
-df = rbind(df, df2)
 df %>% dim()
 
 # df %>% View()
@@ -64,11 +59,32 @@ df %>% names()
 
 df_bck = df
 ```
+
 ```{r}
-df$estrategia %>% as.factor() %>% levels()
-df$moeda %>% as.factor() %>% levels()
+df$trade_01 = ifelse(df$total_trades >= 1, 1, 0)
+table(df$estrategia, df$trade_01) %>% capture()
+conti(df, 'trade_01', 'data_inicio')
+conti(df, 'trade_01', 'estrategia', 'row')
+df = df %>% filter(trade_01 == 1)
+df
 ```
+
+```{r}
+# df$estrategia %>% table()
+# df$moeda %>% table()
+```
+
+```{r}
+df %>% filter(moeda == 'TRX')
+```
+
+
 # ANALISE BI VARIADA
+
+
+```{r}
+arredondamento = 1
+```
 
 ```{r MOEDA}
 medidas <- df %>%
@@ -104,7 +120,7 @@ p <- ggplot(df %>% filter(moeda %in% medidas$moeda),
   geom_hline(yintercept = 10, color = "#f26a8d", linetype = "twodash", linewidth = 0.5) +
   # Estética
   theme_bw() + theme(legend.position = "bottom") + 
-  labs(x = 'Distribuição dos Lucros', y = NULL, title = NULL) +
+  labs(x = 'Distribuição dos Lucros', y = NULL, title = NULL, fill= NULL) +
   coord_flip()
 
 p %>% print()
@@ -167,14 +183,17 @@ medidas <- df %>%
     max = round(max(lucro, na.rm = TRUE), arredondamento),
     .groups = "drop"
   ) %>% 
-  mutate(moeda_estrategia = paste0(moeda, '\n', estrategia))
-df = df %>% mutate(moeda_estrategia = paste0(moeda, '\n', estrategia))
+  mutate(moeda_estrategia = paste0(moeda, '\n', estrategia),
+         exibir = paste0(moeda_estrategia, 'n=', n)) %>% 
+  filter(Q1 != mediana & mediana != Q3) %>% 
+  filter(n >= 10)
+medidas
 
 # Analise mediana -----------------------------------------------------------------------------
 melhores_medianas = medidas %>%
   mutate(classificacao = ifelse(mediana <= 0, "Negativa", "Positiva") %>% as.factor()) %>% 
   arrange(-mediana) %>% filter(classificacao == "Positiva") %>% 
-  slice(1:20)
+  slice(1:40)
 melhores_medianas
 
 p <- ggplot(df %>% filter(moeda_estrategia %in% melhores_medianas$moeda_estrategia), 
@@ -185,7 +204,7 @@ p <- ggplot(df %>% filter(moeda_estrategia %in% melhores_medianas$moeda_estrateg
   geom_violin(alpha = 0.5, show.legend = TRUE, color = 'white' ) +
   geom_boxplot(alpha = 0.8, show.legend = TRUE, width = 0.5) +
   # Médias extras
-  geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
+  # geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
   geom_point(stat = "summary", fun = "mean", show.legend = FALSE,
              shape = 21, fill = "tomato", color = "black", size = 1.5) +
   # geom_point(stat = "summary", fun = "median", show.legend = FALSE,
@@ -197,21 +216,80 @@ p <- ggplot(df %>% filter(moeda_estrategia %in% melhores_medianas$moeda_estrateg
   # Estética
   theme_bw() + theme(legend.position = "none") + 
   labs(x = 'Distribuição dos Lucros', y = NULL, title = 'melhores medianas', fill = NULL) +
-  coord_flip()
+  coord_flip() + 
+  scale_y_continuous(breaks = seq(floor(min(df$lucro, na.rm = TRUE)),
+                                  ceiling(max(df$lucro, na.rm = TRUE)),
+                                  by = 2))
 p %>% print()
-ggsave("melhores medianas.jpg", height = 25, width = 20, units = "cm", dpi = 600)
+ggsave("melhores medianas.jpg", height = 40, width = 25, units = "cm", dpi = 600)
 
 # Analise Q1 -----------------------------------------------------------------------------
 melhores_Q1 = medidas %>%
   mutate(classificacao = ifelse(Q1 <= 0, "Negativa", "Positiva") %>% as.factor()) %>% 
-  arrange(-Q1, -P12_5) %>% filter(classificacao == "Positiva") %>% 
-  slice(1:20)
+  arrange(-Q1, -P12_5) %>% filter(classificacao == "Positiva") #%>% 
+  # slice(1:20)
 melhores_Q1
 
 p <- ggplot(df %>% filter(moeda_estrategia %in% melhores_Q1$moeda_estrategia), 
             aes(x = factor(moeda_estrategia, levels = melhores_Q1$moeda_estrategia),
                 y = lucro,
                 fill = factor(moeda_estrategia, levels = melhores_Q1$moeda_estrategia) ) ) +
+  # Gráficos
+  geom_violin(alpha = 0.5, show.legend = TRUE, color = 'white' ) +
+  geom_boxplot(alpha = 0.8, show.legend = TRUE, width = 0.5) +
+  # Médias extras
+  # geom_errorbar(stat = "summary", fun.data = "mean_se", width = 0.3, color = "grey60") +
+  geom_point(stat = "summary", fun = "mean", show.legend = FALSE,
+             shape = 21, fill = "tomato", color = "black", size = 1.5) +
+  # geom_point(stat = "summary", fun = "median", show.legend = FALSE,
+  #            shape = 21, fill = "#023e8a", color = "black", size = 1.0) +
+  # Linha no zero
+  geom_hline(yintercept = 0, color = "#880d1e", linetype = "twodash", linewidth = 0.5) +
+  geom_hline(yintercept = 5, color = "#dd2d4a", linetype = "twodash", linewidth = 0.5) +
+  geom_hline(yintercept = 10, color = "#f26a8d", linetype = "twodash", linewidth = 0.5) +
+  # Estética
+  theme_bw() + theme(legend.position = "none") + 
+  labs(x = 'Distribuição dos Lucros', y = NULL, title = 'melhores q1', fill = NULL) +
+  coord_flip() + 
+  scale_y_continuous(breaks = seq(floor(min(df$lucro, na.rm = TRUE)),
+                                  ceiling(max(df$lucro, na.rm = TRUE)),
+                                  by = 2))
+
+p %>% print()
+ggsave("melhores q1.jpg", height = 40, width = 25, units = "cm", dpi = 600)
+
+# Analise p12.5 -----------------------------------------------------------------------------
+melhores_p12_5 = medidas %>%
+  mutate(classificacao = ifelse(P12_5 <= 0, "Negativa", "Positiva") %>% as.factor()) %>% 
+  arrange(-P12_5) %>% filter(classificacao == "Positiva") %>% 
+  slice(1:10)
+melhores_p12_5
+```
+```{r SOMENTE UMA MOEDA ESPECIFICA}
+MOEDA = 'BTC'
+
+medidas_moeda <- df %>% filter(moeda == MOEDA) %>% 
+  group_by(estrategia) %>%
+  summarise(
+    n = n(),
+    min = round(min(lucro, na.rm = TRUE), arredondamento),
+    # media = round(mean(lucro, na.rm = TRUE), arredondamento),
+    # desv_pad = round(sd(lucro, na.rm = TRUE), arredondamento),
+    P12_5 = round(quantile(lucro, probs = 0.125, na.rm = TRUE), arredondamento),
+    Q1 = round(quantile(lucro, probs = 0.25, na.rm = TRUE), arredondamento),
+    mediana = round(median(lucro, na.rm = TRUE), arredondamento),
+    Q3 = round(quantile(lucro, probs = 0.75, na.rm = TRUE), arredondamento),
+    max = round(max(lucro, na.rm = TRUE), arredondamento),
+    .groups = "drop"
+  ) %>% 
+  arrange(-Q1, -mediana) %>% 
+  filter(Q1 != mediana & mediana != Q3)
+medidas_moeda
+
+p <- ggplot(df %>% filter(moeda == MOEDA & estrategia %in% medidas_moeda$estrategia), 
+            aes(x = factor(estrategia, levels = medidas_moeda$estrategia),
+                y = lucro,
+                fill = factor(estrategia, levels = medidas_moeda$estrategia) ) ) +
   # Gráficos
   geom_violin(alpha = 0.5, show.legend = TRUE, color = 'white' ) +
   geom_boxplot(alpha = 0.8, show.legend = TRUE, width = 0.5) +
@@ -227,17 +305,15 @@ p <- ggplot(df %>% filter(moeda_estrategia %in% melhores_Q1$moeda_estrategia),
   geom_hline(yintercept = 10, color = "#f26a8d", linetype = "twodash", linewidth = 0.5) +
   # Estética
   theme_bw() + theme(legend.position = "none") + 
-  labs(x = 'Distribuição dos Lucros', y = NULL, title = 'melhores q1', fill = NULL) +
+  labs(x = 'Distribuição dos Lucros', y = NULL, title = MOEDA, fill = NULL) +
   coord_flip()
 p %>% print()
-ggsave("melhores q1.jpg", height = 25, width = 20, units = "cm", dpi = 600)
+ggsave(paste0("Estrategias_",MOEDA,".jpg"), height = 40, width = 25, units = "cm", dpi = 600)
+```
 
-# Analise p12.5 -----------------------------------------------------------------------------
-melhores_p12_5 = medidas %>%
-  mutate(classificacao = ifelse(P12_5 <= 0, "Negativa", "Positiva") %>% as.factor()) %>% 
-  arrange(-P12_5) %>% filter(classificacao == "Positiva") %>% 
-  slice(1:10)
-melhores_p12_5
+
+```{r}
+df %>% filter(moeda == 'ONDO' & estrategia == 'KELTNER CHANNEL')
 ```
 
 
@@ -258,6 +334,7 @@ medidas <- df %>%
   ) %>%
   mutate(classificacao = ifelse(mediana <= 0, "Negativa", "Positiva") %>% as.factor())
 
+###############################################################################
 contagens <- medidas %>%
   group_by(estrategia, classificacao) %>%
   summarise(frequencia = n(), .groups = "drop") %>%
@@ -276,19 +353,43 @@ ggplot(contagens, aes(x = as.factor(estrategia), y = percentual, fill = classifi
   theme_minimal() +
   theme(legend.position = "bottom")
   theme(legend.position = "bottom")
-ggsave("BARRA CONTAGEM POSITIVAS FILTRADA.jpg", height = 35, width = 15, units = "cm", dpi = 600)
+ggsave("CONTAGEM POSITIVAS POR ESTRATEGIA.jpg", height = 35, width = 15, units = "cm", dpi = 600)
+
+###############################################################################
+
+contagens_moeda <- medidas %>%
+  group_by(moeda, classificacao) %>%
+  summarise(frequencia = n(), .groups = "drop") %>%
+  group_by(moeda) %>%
+  mutate(
+    percentual = frequencia / sum(frequencia) * 100
+  )
+
+ggplot(contagens_moeda, aes(x = as.factor(moeda), y = percentual, fill = classificacao)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = sprintf("%.0f%%", percentual)),
+            position = position_stack(vjust = 0.5),
+            color = "black", size = 3.5) +
+  coord_flip() +
+  labs(x = NULL, y = "Percentual (%)", fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+  theme(legend.position = "bottom")
+ggsave("CONTAGEM POSITIVAS POR MOEDA.jpg", height = 35, width = 15, units = "cm", dpi = 600)
+
 ```
 
 
 ```{r}
 df_bck$estrategia %>% as.factor() %>% levels() %>% length()
 
-lista_estrategias = contagens %>% filter(classificacao == 'Positiva' & percentual >= 50)
+lista_estrategias = contagens %>% filter(classificacao == 'Positiva' & percentual >= 40)
 lista_estrategias = lista_estrategias$estrategia %>% as.factor() %>% levels()
 lista_estrategias %>% length()
 
 df = df %>% filter(estrategia %in% lista_estrategias)
 ```
+
 ```{r}
 df$estrategia %>% as.factor() %>% levels()
 df$moeda %>% as.factor() %>% levels()
@@ -362,7 +463,7 @@ p <- ggplot(df_plot %>% filter(estrategia %in% lista_estrategias),
   facet_wrap(~estrategia, ncol = 5)
 
 print(p)
-ggsave("analise distribuição - boxplot.jpg", plot = p, height = lista_estrategias %>% length() * 10, width = 50, units = "cm", dpi = 600)
+ggsave("analise distribuição - boxplot.jpg", plot = p, height = 100, width = 50, units = "cm", dpi = 600)
 
 ```
 
@@ -404,9 +505,11 @@ for (nivel in df$estrategia %>% as.factor() %>% levels()){
 }
 ```
 
+# ANALISE APROFUNDADA DAS melhores_Q1
 
 ```{r}
-
+df_filter = df %>% filter (moeda_estrategia %in% melhores_Q1$moeda_estrategia)
+df_filter
 ```
 
 
