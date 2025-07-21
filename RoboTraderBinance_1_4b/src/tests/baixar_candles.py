@@ -95,3 +95,12 @@ def baixar_candles(cod_moeda: str, data_inicio: str, data_fim: str, periodo: str
     # print(f"🕒 Intervalo real: {df['open_time'].min()} ➝ {df['open_time'].max()}")
 
     return df[["close_price", "open_time", "open_price", "high_price", "low_price", "volume"]]
+
+NOME_MOEDA = 'BTC'
+STOCK_CODE = NOME_MOEDA  # Código da Criptomoeda
+OPERATION_CODE = NOME_MOEDA + "USDT"  # Código da operação (cripto + moeda)
+INITIAL_BALANCE = 1000  # Valor de investimento inicial em USDT ou BRL
+CANDLE_PERIOD = '1h'
+
+intervalos_tempo = ['15/07/2025 00:00', '20/07/2025 00:00']
+baixar_candles(OPERATION_CODE, intervalos_tempo[0], intervalos_tempo[1], CANDLE_PERIOD)

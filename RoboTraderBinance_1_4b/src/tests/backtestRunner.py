@@ -4,19 +4,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import os
 import pytz
-
-# ------------------------------------------------------------------------
-# 🔎 AJUSTES PADRÕES DO BACKTEST 🔎
-
-# Parâmetros padrão do backtest
-DEFAULT_START_DATE = '2025-03-01 00:00:00'
-DEFAULT_END_DATE = '2025-03-07 00:00:00'
-
-# ------------------------------------------------------------------------
-# 🧮 CONFIGURAÇÕES DE BUFFER E CÁLCULOS 🧮
-
-# Buffer de candles para cálculo dos indicadores (ex.: média móvel de 200 períodos)
-INDICATOR_BUFFER_SIZE = 300  # ~12,5 dias para candles de 60 minutos
+import traceback ## Obter todas informações sobre o erro
 
 # ------------------------------------------------------------------------
 # 📊 FUNÇÃO PRINCIPAL DE BACKTEST 📊
@@ -111,27 +99,32 @@ def backtestRunner(
         count = 0
         extended_data['acao_tomada'] = np.nan
         # Loop de execução do backtest: percorre todos os candles do conjunto estendido
-        for i in range(1, len(extended_data)):
+        for i in range(0, len(extended_data)+1):
 
             # Redefine o índice para garantir que a estratégia acesse os dados por posição
             current_data = extended_data.iloc[: i+1].reset_index(drop=True)
 
             # Ignora candles anteriores ao start_date (ainda usados para cálculo dos indicadores)
-            if "open_time" in current_data.columns:
-                if current_data.iloc[-1]["open_time"] <= start_date:
-                    continue
-            else:
-                pass
-
+            if current_data.iloc[-1]["open_time"] < start_date:
+                continue
+            
             # if count == 0:
             #     print(extended_data.iloc[i])
             # count += 1
 
             # Executa a estratégia com os dados históricos até o candle atual
             if strategy_instance:
-                signal = strategy_function(strategy_instance)
+                signal = strategy_function(strategy_instance, all_metrics_return = True)
             else:
-                signal = strategy_function(current_data, **strategy_kwargs)
+                signal = strategy_function(current_data, all_metrics_return = True, **strategy_kwargs)
+
+            # Extraindo as metricas da estrategias
+            strategy_metrics = signal[1] # DATAFRAME COM METRICAS DA ESTRATEGIA
+            signal = signal[0] # SINAL DE COMPRA OU VENDA
+            for coluna in strategy_metrics.columns: # ACRESCENTANDO AS METRICAS DA ESTRATEGIA NO DATAFRAME COM PRECOS
+                if coluna not in extended_data.columns:
+                    extended_data[coluna] = np.nan
+                extended_data.loc[i, coluna] = strategy_metrics[coluna].iloc[-1]
 
             if signal is None:
                 continue
@@ -142,7 +135,8 @@ def backtestRunner(
             if signal and position == 0 and last_signal != "buy":
                 position = 1
                 entry_price = close_price
-                last_signal = "buy"; extended_data.loc[i, 'acao_tomada'] = last_signal
+                last_signal = "buy"
+                extended_data.loc[i, 'acao_tomada'] = last_signal # registrando compra
                 trades += 1
                 buy_signals.append((extended_data.iloc[i]['formatted_time'], close_price))
 
@@ -160,7 +154,8 @@ def backtestRunner(
                     loss_trades_count += 1
                     loss_trades_value += profit
 
-                last_signal = "sell"; extended_data.loc[i, 'acao_tomada'] = last_signal
+                last_signal = "sell"
+                extended_data.loc[i, 'acao_tomada'] = last_signal # registrando venda
                 trades += 1
                 sell_signals.append((extended_data.iloc[i]['formatted_time'], close_price))
 
@@ -272,8 +267,6 @@ def backtestRunner(
 
         # ------------------------------------------------------------------------
         # print(extended_data[extended_data['acao_tomada'].notnull()])
-
-        # return profit_percentage
         return [
             nome_estrategia if nome_estrategia != '' else strategy_function.__name__,  # Nome da estratégia
             start_date,
@@ -289,8 +282,9 @@ def backtestRunner(
             avg_profit_percentage,
             avg_loss_trade_abs,
             avg_loss_percentage
-        ]
-    except:
+        ], current_data
+    except Exception as e:
+        print(traceback.format_exc())
         return [
             nome_estrategia if nome_estrategia != '' else strategy_function.__name__,  # Nome da estratégia
             start_date,
@@ -306,7 +300,7 @@ def backtestRunner(
             np.nan,
             np.nan,
             np.nan
-        ]
+        ], current_data
 
 
 #| Índice | Métrica                 | Descrição                                          |

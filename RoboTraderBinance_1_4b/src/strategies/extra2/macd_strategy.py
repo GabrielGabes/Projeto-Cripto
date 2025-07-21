@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
 
-
 def getMACDTradeStrategy(
     stock_data: pd.DataFrame,
     fast_period: int = 12,
     slow_period: int = 26,
     signal_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia MACD (Moving Average Convergence Divergence) para negociação.
@@ -65,4 +65,19 @@ def getMACDTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'last_macd': stock_data['macd'],
+            'last_signal': stock_data['macd_signal'],
+            'macd_hist': stock_data['macd_hist']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

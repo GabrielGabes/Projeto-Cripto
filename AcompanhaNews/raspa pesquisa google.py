@@ -26,7 +26,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 import traceback
-import io
+import platform
 
 # import schedule
 
@@ -34,32 +34,49 @@ import io
 chrome_options = Options()
 # chrome_options.add_argument("--headless")  # remove se quiser ver o navegador
 chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--window-size=1920x1080")
+chrome_options.add_argument("--no-sandbox") # Desativa o isolamento de processos (necess�rio em ambientes restritos, como Raspberry Pi ou Docker)
+chrome_options.add_argument("--disable-dev-shm-usage") # Redireciona o uso de mem�ria compartilhada (evita erros em sistemas com /dev/shm limitado)
+# chrome_options.add_argument("--disable-infobars") # Remove a barra "Chrome est� sendo controlado por software automatizado"
+chrome_options.add_argument("--disable-extensions") # Impede que extens�es do Chrome sejam carregadas (torna o navegador mais limpo e leve)
+chrome_options.add_argument("--window-size=1366x768") # Define o tamanho da janela: largura=1366, altura=768 (simula tela de notebook comum)
+# chrome_options.add_argument("--window-position=0,312") # Posiciona a janela na tela: canto inferior (0 = esquerda, 312 = parte inferior da tela)
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+if platform.system() == "Windows":
+    # Usar webdriver-manager no Windows
+    from webdriver_manager.chrome import ChromeDriverManager
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=chrome_options
+    )
+else:
+    # Usar driver manual no Linux/Raspberry
+    driver = webdriver.Chrome(
+        service=Service("/usr/bin/chromedriver"),
+        options=chrome_options
+    )
 print('Iniciando o navegador...'); time.sleep(5)
 
 #================================================================================
 def buscar_noticias(termo_busca, intervalo="1h"):
-    # opÃ§Ãµes de intervalo 
-    # 'Ãšltima hora':'1h',
-    # 'Ãšltimas 24 horas': '1d',
-    # 'Ãšltima semana':'7d',
+    # opções de intervalo 
+    # 'Última hora':'1h',
+    # 'Últimas 24 horas': '1d',
+    # 'Última semana':'7d',
     termo_url = termo_busca.replace(" ", "%20")
     url = f"https://news.google.com/search?q={termo_url}%20when%3A{intervalo}&hl=pt-BR&gl=BR&ceid=BR%3Apt-419"
     driver.get(url)
 
 #================================================================================
 def extrair_noticias():
-    # Pega o HTML da pÃ¡gina e processa com BS4
+    # Pega o HTML da página e processa com BS4
     html = driver.find_element("xpath", "/html").get_attribute("outerHTML")
     soup = BeautifulSoup(html, "html.parser")
     resultados = []
 
     for artigo in soup.select("article"):
         try:
-            # TÃ­tulo e link
+            # Título e link
             a_tag = artigo.select_one("a.JtKRv")
             if not a_tag:
                 continue
@@ -74,7 +91,7 @@ def extrair_noticias():
 
             # Tempo publicado
             tempo_elem = artigo.select_one("time.hvbAAd")
-            tempo_texto = tempo_elem.get_text(strip=True) if tempo_elem else "Tempo nÃ£o disponÃ­vel"
+            tempo_texto = tempo_elem.get_text(strip=True) if tempo_elem else "Tempo não disponível"
             tempo_data = tempo_elem.get("datetime") if tempo_elem and tempo_elem.has_attr("datetime") else None
 
             resultados.append({
@@ -95,11 +112,11 @@ def formatar_linha_estilo_telegram(df, linha):
     dados = df.iloc[linha]
 
     return (
-        f"<b>ðŸ“° {dados['titulo']}</b>\n"
-        f"<b>ðŸŒ Site:</b> {dados['site']}\n"
-        f"<b>â± Tempo:</b> {dados['tempo']}\n"
-        f"<b>ðŸ“… Data ISO:</b> {dados['data_iso']}\n"
-        f"<a href=\"{dados['link']}\">ðŸ”— Link</a>"
+        f"<b>📰 {dados['titulo']}</b>\n"
+        f"<b>🌐 Site:</b> {dados['site']}\n"
+        f"<b>⏱ Tempo:</b> {dados['tempo']}\n"
+        f"<b>📅 Data ISO:</b> {dados['data_iso']}\n"
+        f"<a href=\"{dados['link']}\">🔗 Link</a>"
     )
 
 # Substitua pelos seus valores
@@ -117,7 +134,10 @@ def send_telegram_message(message):
     requests.post(url, data=data)
 
 #================================================================================
-caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/'
+if platform.system() == "Windows":
+    caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/'
+else:
+    caminho_fd = '/home/raspgabes/Documents/Projeto-Analise-de-CriptosMoedas/AcompanhaNews/'
 fd = pd.read_csv(caminho_fd + 'registros_noticias.csv', sep=';')
 
 def pesquisa_completa(pesquisa, periodo='1h'):
@@ -133,7 +153,7 @@ def pesquisa_completa(pesquisa, periodo='1h'):
         df = pd.DataFrame(noticias)
         df['pesquisa'] = pesquisa
 
-        # verificando se jÃ¡ hÃ¡ registro desta noticia no sistema
+        # verificando se já há registro desta noticia no sistema
         for linha in range(len(df)):
             filtro = (fd['titulo'] == df['titulo'][linha]) & (fd['site'] == df['site'][linha])
             if len(fd[filtro]) >= 1:
@@ -158,7 +178,7 @@ def aviso_vida():
     send_telegram_message('***********************************')
 #================================================================================
 
-# FunÃ§Ã£o para pesquisar por todos os termos
+# Função para pesquisar por todos os termos
 def rodar_pesquisas():
     # Lista de termos de pesquisa
     termos_de_pesquisa = [
@@ -166,7 +186,7 @@ def rodar_pesquisas():
         'Near Protocol (NEAR) crypto',
         'Flow (FLOW) crypto',
         'Kadena (KDA) crypto',
-        'Hedera Hashgraph (HBAR) crypto',
+        'HBAR (Hedera Hashgraph) crypto',
         'Oasis Network (ROSE) crypto',
         'Ocean Protocol (OCEAN) crypto',
         'Arweave (AR) crypto',
@@ -181,7 +201,7 @@ def rodar_pesquisas():
     ]
     for termo in termos_de_pesquisa:
         print('Pesquisando:', termo)
-        pesquisa_completa(termo)  # Sua funÃ§Ã£o que busca as notÃ­cias
+        pesquisa_completa(termo)  # Sua função que busca as notícias
         time.sleep(1)
 # Testando
 pesquisa_completa('BTC'); time.sleep(2)
@@ -192,9 +212,7 @@ while True:
         rodar_pesquisas()
         time.sleep(60*5)
     except:
-        f = io.StringIO()
-        traceback.print_exc(file=f)
-        mensagem = '⚠️ Erro fatal! Código encerrado:\n' + f.getvalue()
+        mensagem = 'erro fatal! o codigo foi encerrado.\n' + traceback.print_exc()
         send_telegram_message(mensagem)
         break
 
@@ -208,7 +226,7 @@ while True:
 # # Loop principal
 # print('Entrando em Looping...'); time.sleep(2)
 # while True:
-#     schedule.run_pending()  # Executa a prÃ³xima funÃ§Ã£o agendada, se houver
+#     schedule.run_pending()  # Executa a próxima função agendada, se houver
 #     time.sleep(1)           # Aguarda 1 segundo antes de verificar novamente
 
 # #===============================================================================

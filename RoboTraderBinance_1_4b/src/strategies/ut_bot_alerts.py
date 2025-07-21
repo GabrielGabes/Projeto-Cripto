@@ -17,7 +17,7 @@ def calculate_atr(high, low, close, period=10):
     return atr
 
 
-def utBotAlerts(stock_data: pd.DataFrame, atr_period=10, atr_multiplier=2, verbose=True):
+def utBotAlerts(stock_data: pd.DataFrame, atr_period=10, atr_multiplier=2, verbose=True, all_metrics_return = True):
     """
     Implementa o indicador UT Bot Alerts para gerar sinais de compra e venda.
 
@@ -71,4 +71,19 @@ def utBotAlerts(stock_data: pd.DataFrame, atr_period=10, atr_multiplier=2, verbo
         print(f' | Decisão: {"Comprar" if trade_decision == True else "Vender" if trade_decision == False else "Nenhuma"}')
         print("-------")
 
-    return trade_decision  # Retorna True se for para estar comprado, False se for para estar vendido
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'atr': atr,
+            'trailing_stop': trailing_stop,
+            'pos': pos
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

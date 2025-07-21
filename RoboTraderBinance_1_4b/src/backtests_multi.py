@@ -45,7 +45,6 @@ moedas = [
     'LTC', # Litecoin
     'DOT', # Polkadot
     'XMR', # Monero
-    'DAI', # Dai
     'PEPE', # Pepe
     'AAVE', # Aave
     'UNI', # Uniswap
@@ -81,11 +80,12 @@ periodos_candles = [
             # MINUTOS
             # # Periodos muito muito curtos
             # Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_3MINUTE, 
-            # Client.KLINE_INTERVAL_5MINUTE, Client.KLINE_INTERVAL_15MINUTE, 
+            # Client.KLINE_INTERVAL_5MINUTE, 
+            Client.KLINE_INTERVAL_15MINUTE, 
             # Client.KLINE_INTERVAL_30MINUTE, 
             
             # HORAS
-            Client.KLINE_INTERVAL_1HOUR
+            # Client.KLINE_INTERVAL_1HOUR
             # # Periodos muito muito longo
             # , Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_6HOUR, Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_12HOUR,
             
@@ -95,7 +95,7 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['01/01/2025 00:00', '08/06/2025 00:00']]
+intervalos_tempo = [['01/12/2024 00:00', '20/07/2025 18:00']]
 
 count = 0
 # Rodando simulação para cada moeda
@@ -113,8 +113,8 @@ for moeda in moedas:
     
     count += 1
     if count % 2 == 0:
-        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250806_1h.parquet', index=False)
+        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
+        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250720_15m.parquet', index=False)
 
 print('*'*50, 'TERMINOU DE RODAR', '*'*50)
 print(df.shape)
@@ -123,5 +123,5 @@ print(df.shape)
 # for col in df.select_dtypes(include=['datetimetz']).columns:
 #     df[col] = df[col].dt.tz_localize(None)
 
-pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250806_1h.parquet', index=False)
+pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
+df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20250720_15m.parquet', index=False)

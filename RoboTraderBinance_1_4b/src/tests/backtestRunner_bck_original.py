@@ -58,10 +58,6 @@ def backtestRunner(
     for i in range(1, len(stock_data)):
         current_data = stock_data.iloc[: i + 1]
 
-        if count == 0:
-            print(stock_data.iloc[i])
-        count += 1
-
         # Se a função precisa de um objeto (ex: `self`), passamos a instância do bot
         if strategy_instance:
             signal = strategy_function(strategy_instance)
