@@ -1,22 +1,24 @@
 # BIBLIOTECAS EXTRAS
 import sys
-sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
-from tests.calculadora_candles import calculadora_candles
+sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src") # gabriel
+# sys.path.append(r"") # michael
+from dotenv import load_dotenv
+
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
+from tests.calculadora_candles import calculadora_candles
 from tests.baixar_candles import baixar_candles
-import warnings
 
 from modules.BinanceTraderBot import BinanceTraderBot
 from binance.client import Client
 from tests.backtestRunner import backtestRunner
 
-from binance.client import Client
-import pandas as pd
 from datetime import datetime, timedelta
+
+import pandas as pd
 import pytz
 import os
-from dotenv import load_dotenv
 
 # Carrega credenciais do .env
 load_dotenv()
