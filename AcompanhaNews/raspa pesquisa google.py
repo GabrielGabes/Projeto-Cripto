@@ -15,6 +15,7 @@ import requests
 import time
 import datetime
 
+import threading
 import pandas as pd
 import numpy as np
 
@@ -57,6 +58,31 @@ else:
     )
 print('Iniciando o navegador...'); time.sleep(5)
 
+#================================================================================
+
+BOT_TOKEN_STATUS = '8013077654:AAFWFkaRcWDCRHcCSXbjn877CNs9wQ4hmBA'
+CHAT_ID_STATUS = '-1002871039327'
+
+def send_status_message(mensagem):
+    print('Bot online ✅')
+    url = f"https://api.telegram.org/bot{BOT_TOKEN_STATUS}/sendMessage"
+    payload = {
+        'chat_id': CHAT_ID_STATUS,
+        'text': mensagem,
+        'parse_mode': 'Markdown' 
+    }
+    try:
+        response = requests.post(url, data=payload)
+        if response.status_code != 200:
+            print(f"Erro ao enviar mensagem: {response.text}")
+    except Exception as e:
+        print(f"Exceção ao enviar mensagem: {e}")
+
+def verificar_status_robo():
+    agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    mensagem = f"RPA ACOMPANHANEWS: Online {agora}✅"
+    send_status_message(mensagem)
+    threading.Timer(600, verificar_status_robo).start()
 #================================================================================
 def buscar_noticias(termo_busca, intervalo="1h"):
     # opções de intervalo 
@@ -135,7 +161,8 @@ def send_telegram_message(message):
 
 #================================================================================
 if platform.system() == "Windows":
-    caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/'
+    # caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/' #-PC GABRIEL-#
+    caminho_fd = 'C:/Users/michael/OneDrive/Documentos/Criptos/AcompanhaNews/' #- PC MICHAEL-#
 else:
     caminho_fd = '/home/raspgabes/Documents/Projeto-Analise-de-CriptosMoedas/AcompanhaNews/'
 fd = pd.read_csv(caminho_fd + 'registros_noticias.csv', sep=';')
@@ -204,8 +231,10 @@ def rodar_pesquisas():
         pesquisa_completa(termo)  # Sua função que busca as notícias
         time.sleep(1)
 # Testando
-pesquisa_completa('BTC'); time.sleep(2)
+# pesquisa_completa('BTC'); time.sleep(2)
 #===============================================================================
+
+verificar_status_robo()
 
 while True:
     try:
