@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.chrome.options import Options
 
 from bs4 import BeautifulSoup
@@ -185,7 +185,7 @@ if platform.system() == "Windows":
     # caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/' #-PC GABRIEL-#
     caminho_fd = 'C:/Users/michael/OneDrive/Documentos/Criptos/AcompanhaNews/' #- PC MICHAEL-#
 else:
-    caminho_fd = '/home/raspgabes/Documents/Projeto-Analise-de-CriptosMoedas/AcompanhaNews/'
+    caminho_fd = '/home/maikola/Documentos/Projeto-Cripto-main/AcompanhaNews/'
 fd = pd.read_csv(caminho_fd + 'registros_noticias.csv', sep=';')
 
 def pesquisa_completa(pesquisa, periodo='1h'):
