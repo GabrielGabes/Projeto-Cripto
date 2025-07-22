@@ -438,21 +438,21 @@ def backtests_simulador(
     # df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
     # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '' + '.parquet', index=False)
     # # #######################################################################################################
-    # # ------------------------------------------------------------------------
-    # print(f"\n{STOCK_CODE} - RSI - {str(CANDLE_PERIOD)}")
-    # final_results, price_metrics = backtestRunner(
-    #     stock_data=dados_candles,
-    #     strategy_function=getRsiTradeStrategy,
-    #     nome_estrategia="RSI",
-    #     initial_balance=INITIAL_BALANCE,
-    #     low=30,
-    #     high=70,
-    #     start_date=DEFAULT_START_DATE,
-    #     end_date=DEFAULT_END_DATE,
-    #     verbose=False,
-    # )
-    # df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '' + '.parquet', index=False)
+    # ------------------------------------------------------------------------
+    print(f"\n{STOCK_CODE} - RSI - {str(CANDLE_PERIOD)}")
+    final_results, price_metrics = backtestRunner(
+        stock_data=dados_candles,
+        strategy_function=getRsiTradeStrategy,
+        nome_estrategia="RSI",
+        initial_balance=INITIAL_BALANCE,
+        low=30,
+        high=70,
+        start_date=DEFAULT_START_DATE,
+        end_date=DEFAULT_END_DATE,
+        verbose=False,
+    )
+    df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '' + '.parquet', index=False)
     # # ------------------------------------------------------------------------
     # print(f"\n{STOCK_CODE} - VORTEX - {str(CANDLE_PERIOD)}")
     # final_results, price_metrics = backtestRunner(

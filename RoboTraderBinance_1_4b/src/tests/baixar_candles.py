@@ -11,7 +11,11 @@ api_key = os.getenv("BINANCE_API_KEY")
 secret_key = os.getenv("BINANCE_SECRET_KEY")
 client = Client(api_key, secret_key)
 
-def baixar_candles(cod_moeda: str, data_inicio: str, data_fim: str, periodo: str, ajuste=True) -> pd.DataFrame:
+def baixar_candles(cod_moeda: str, 
+                   data_inicio: str, 
+                   data_fim: str, 
+                   periodo: str, 
+                   ajuste=True) -> pd.DataFrame:
     """
     Baixa candles de um par de moedas entre duas datas-hora com o período especificado,
     usando requisições paginadas (500 por vez) e ajuste de 120 candles anteriores para cálculo de indicadores.
@@ -96,11 +100,12 @@ def baixar_candles(cod_moeda: str, data_inicio: str, data_fim: str, periodo: str
 
     return df[["close_price", "open_time", "open_price", "high_price", "low_price", "volume"]]
 
-NOME_MOEDA = 'BTC'
-STOCK_CODE = NOME_MOEDA  # Código da Criptomoeda
-OPERATION_CODE = NOME_MOEDA + "USDT"  # Código da operação (cripto + moeda)
-INITIAL_BALANCE = 1000  # Valor de investimento inicial em USDT ou BRL
-CANDLE_PERIOD = '1h'
+### TESTANDO
+# NOME_MOEDA = 'BTC'
+# STOCK_CODE = NOME_MOEDA  # Código da Criptomoeda
+# OPERATION_CODE = NOME_MOEDA + "USDT"  # Código da operação (cripto + moeda)
+# INITIAL_BALANCE = 1000  # Valor de investimento inicial em USDT ou BRL
+# CANDLE_PERIOD = '1h'
 
-intervalos_tempo = ['15/07/2025 00:00', '20/07/2025 00:00']
-baixar_candles(OPERATION_CODE, intervalos_tempo[0], intervalos_tempo[1], CANDLE_PERIOD)
+# intervalos_tempo = ['15/07/2025 00:00', '20/07/2025 00:00']
+# baixar_candles(OPERATION_CODE, intervalos_tempo[0], intervalos_tempo[1], CANDLE_PERIOD)

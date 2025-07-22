@@ -2,7 +2,7 @@ import pandas as pd
 from indicators import Indicators
 
 
-def getRsiTradeStrategy(stock_data: pd.DataFrame, low=30, high=70, verbose=True):
+def getRsiTradeStrategy(stock_data: pd.DataFrame, low=30, high=70, verbose=True, all_metrics_return = True):
 
     stock_data = stock_data.copy()  # Importante para evitar bugs
 
@@ -42,5 +42,18 @@ def getRsiTradeStrategy(stock_data: pd.DataFrame, low=30, high=70, verbose=True)
         print(f' | Decisão: {"Comprar" if trade_decision == True else "Vender" if trade_decision == False else "Nenhuma"}')
 
         print("-------")
-
-    return trade_decision
+    
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'RSI': stock_data["RSI"]
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

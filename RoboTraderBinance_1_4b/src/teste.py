@@ -53,12 +53,12 @@ df = pd.DataFrame(columns=[
 # ------------------------------------------------------------------------
 # ⏬ SELEÇÃO DE ESTRATÉGIAS ⏬
 
-from strategies.ut_bot_alerts import *
+from strategies.rsi_strategy import *
 
 final_result, price_decision_metrics = backtestRunner(
     stock_data=dados_candles,
-    strategy_function=utBotAlerts,
-    nome_estrategia="utBotAlerts",
+    strategy_function=getRsiTradeStrategy,
+    nome_estrategia="getRsiTradeStrategy",
     initial_balance=INITIAL_BALANCE,
     start_date=intervalos_tempo[0],
     end_date=intervalos_tempo[1],
