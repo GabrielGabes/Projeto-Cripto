@@ -1,6 +1,8 @@
 # BIBLIOTECAS EXTRAS
 import sys
-sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
+# sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
+sys.path.append(r"C:\Users\michael\OneDrive\Documentos\GitHub\Projeto-Cripto\RoboTraderBinance_1_4b\src")
+
 from tests.calculadora_candles import calculadora_candles
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
