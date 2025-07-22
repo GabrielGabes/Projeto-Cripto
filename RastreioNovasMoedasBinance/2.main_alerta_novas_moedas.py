@@ -4,12 +4,59 @@ import requests
 
 import pandas as pd
 import numpy as np
-
+import datetime
+import threading
 import os
 import time
 import traceback
 import io
 
+#================================================================================# Configurações do bot de status
+BOT_TOKEN_STATUS = '8013077654:AAFWFkaRcWDCRHcCSXbjn877CNs9wQ4hmBA'
+CHAT_ID_STATUS = '-1002871039327'
+
+def send_status_message(mensagem):
+    print('Bot online ✅')
+    url = f"https://api.telegram.org/bot{BOT_TOKEN_STATUS}/sendMessage"
+    payload = {
+        'chat_id': CHAT_ID_STATUS,
+        'text': mensagem,
+        'parse_mode': 'Markdown' 
+    }
+    try:
+        response = requests.post(url, data=payload)
+        if response.status_code != 200:
+            print(f"Erro ao enviar mensagem: {response.text}")
+    except Exception as e:
+        print(f"Exceção ao enviar mensagem: {e}")
+
+def obter_intervalo_do_info():
+    url = f"https://api.telegram.org/bot{BOT_TOKEN_STATUS}/getChat"
+    params = {'chat_id': CHAT_ID_STATUS}
+    try:
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            descricao = data.get('result', {}).get('description', '')
+            intervalo = float(descricao.strip()) * 60  # minutos para segundos
+            intervalo = max(1, int(intervalo))  # garante pelo menos 1 segundo
+            print(f"Intervalo lido da descrição: {intervalo} seg")
+            return intervalo
+        else:
+            print(f"Erro ao obter descrição: {response.text}")
+    except Exception as e:
+        print(f"Erro ao ler info: {e}")
+    return 600  # valor padrão em segundos (10 minutos)
+
+def verificar_status_robo():
+    agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    mensagem = f"RPA NOVAS MOEDAS: Online {agora} ✅"
+    send_status_message(mensagem)
+
+    intervalo = obter_intervalo_do_info()
+    threading.Timer(intervalo, verificar_status_robo).start()
+    
+#================================================================================
 # Substitua pelos seus valores
 TELEGRAM_BOT_TOKEN = "7446801344:AAHenxPWZzBffuowmaTWISyksUIsvBltkIg"
 CHAT_ID = "-4628628345"
@@ -29,7 +76,7 @@ def formatar_mensagem_telegram(lista):
     for moeda in lista:
         texto = texto + '\n' + moeda
     return texto
-
+#================================================================================
 # Carregar chaves da API da Binance (opcional, só é necessário para chamadas privadas)
 load_dotenv()
 API_KEY = os.getenv("BINANCE_API_KEY")
@@ -43,6 +90,8 @@ df = pd.read_parquet(caminho_arquivo)
 # VERIFICANDO SE HÁ ALGUMA MOEDA NOVA:
 # Inicializar cliente
 client = Client(API_KEY, API_SECRET)
+
+verificar_status_robo()
 
 while True:
     # Obter todos os pares de negociação da Binance
