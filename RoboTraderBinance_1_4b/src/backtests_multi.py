@@ -19,7 +19,8 @@ from tests.backtests_simulador import backtests_simulador
 df = pd.DataFrame(columns=[
     'Estrategia', 'Data_Inicio', 'Data_Fim', 'Saldo_Final', 'Lucro_%', 'Total_Trades',
     'Trades_Lucrativos', 'Valor_Lucro_Total', 'Trades_Preuízo', 'Valor_Preuízo_Total',
-    'Lucro_Médio_Trade', 'Lucro_%_Médio', 'Prejuízo_Médio_Trade', 'Prejuízo_%_Médio'
+    'Lucro_Médio_Trade', 'Lucro_%_Médio', 'Prejuízo_Médio_Trade', 'Prejuízo_%_Médio',
+    'Tempo_Simulacao'
     ])
 
 moedas = [
@@ -92,7 +93,7 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 02:00']]
+intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:00']]
 
 count = 0
 # Rodando simulação para cada moeda

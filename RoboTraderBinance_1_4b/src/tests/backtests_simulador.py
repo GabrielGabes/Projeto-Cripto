@@ -89,7 +89,7 @@ import time
 def backtests_simulador(
         NOME_MOEDA, 
         CANDLE_PERIOD = '1h', 
-        DEFAULT_START_DATE='01/12/2025 03:00',
+        DEFAULT_START_DATE='10/07/2025 03:00',
         DEFAULT_END_DATE='20/07/2025 03:00'
         ):
     # ------------------------------------------------------------------------
@@ -121,7 +121,7 @@ def backtests_simulador(
 
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - UT BOTS - {str(CANDLE_PERIOD)}")
-    NOME_ESTRATEGIA = 'BOTS '
+    NOME_ESTRATEGIA = 'UT BOTS'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=utBotAlerts,
@@ -481,7 +481,7 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # # ------------------------------------------------------------------------
     # print(f"\n{STOCK_CODE} - VORTEX - {str(CANDLE_PERIOD)}")
     # NOME_ESTRATEGIA = 'VORTEX '
@@ -552,7 +552,7 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + 'MACD' + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # # ------------------------------------------------------------------------
     # print(f"\n{STOCK_CODE} - Stochastic RSI - {str(CANDLE_PERIOD)}")
     # NOME_ESTRATEGIA = 'Stochastic RSI '
@@ -624,7 +624,7 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # # ------------------------------------------------------------------------
     # print(f"\n{STOCK_CODE} - ALMA - {str(CANDLE_PERIOD)}")
     # NOME_ESTRATEGIA = 'ALMA '
@@ -864,7 +864,7 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # # ------------------------------------------------------------------------
     # print(f"\n{STOCK_CODE} - Fractals - {str(CANDLE_PERIOD)}")
     # NOME_ESTRATEGIA = 'Fractals '
@@ -1206,7 +1206,7 @@ def backtests_simulador(
     # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - Ultimate Oscillator - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = 'Oscillator '
+    NOME_ESTRATEGIA = 'Ultimate Oscillator'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getUltimateOscillatorTradeStrategy,
@@ -1217,10 +1217,10 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - VIDYA - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = '    print(f"\n{STOCK_CODE} - VIDYA - {str(CANDLE_PERIOD)}")'
+    NOME_ESTRATEGIA = 'VIDYA'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getVIDYATradeStrategy,
@@ -1231,10 +1231,10 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - Volume Weighted Average Price VWAP - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = 'Weighted Average Price VWAP '
+    NOME_ESTRATEGIA = 'Weighted Average Price VWAP'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getVolumeWeightedAveragePriceTradeStrategy,
@@ -1245,10 +1245,10 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - Williams Alligator - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = 'Alligator '
+    NOME_ESTRATEGIA = 'Williams Alligator'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getWilliamsAlligatorTradeStrategy,
@@ -1259,10 +1259,10 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - WMA - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = '    print(f"\n{STOCK_CODE} - WMA - {str(CANDLE_PERIOD)}")'
+    NOME_ESTRATEGIA = 'WMA'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getWMATradeStrategy,
@@ -1273,10 +1273,10 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print(f"\n{STOCK_CODE} - Zero Lag Moving Average - {str(CANDLE_PERIOD)}")
-    # NOME_ESTRATEGIA = 'Lag Moving Average '
+    NOME_ESTRATEGIA = 'Zero Lag Moving Average'
     final_results, price_metrics = backtestRunner(
         stock_data=dados_candles,
         strategy_function=getZeroLagMovingAverageTradeStrategy,
@@ -1287,7 +1287,7 @@ def backtests_simulador(
         verbose=False,
     )
     df = pd.concat([df, pd.DataFrame([final_results], columns=df.columns)], axis=0, ignore_index=True)
-    # price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
+    price_metrics.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '_' + NOME_ESTRATEGIA + '.parquet', index=False)
     # ------------------------------------------------------------------------
     print("\n\n")
     # ------------------------------------------------------------------------

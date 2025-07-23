@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import pytz
 import traceback ## Obter todas informações sobre o erro
+import time
 
 # ------------------------------------------------------------------------
 # 📊 FUNÇÃO PRINCIPAL DE BACKTEST 📊
@@ -21,6 +22,8 @@ def backtestRunner(
     ):
     try:
         print('*'*120)
+
+        inicio = time.time()
 
         """ 
         Executa um backtest de uma estratégia de trading, garantindo que os indicadores 
@@ -213,6 +216,9 @@ def backtestRunner(
         print(f"🔹 Média de Lucro por Trade   :  ${avg_profit_trade:.2f} ({avg_profit_percentage:.2f}%)")
         print(f"🔹 Média de Prejuízo por Trade:  ${avg_loss_trade_abs:.2f} ({avg_loss_percentage:.2f}%)\n")
 
+        fim = time.time()
+        tempo_cronometrado = fim - inicio
+        print('Tempo para rodar simulação (s):', tempo_cronometrado)
         # ------------------------------------------------------------------------
         # --------------------- GRAFICO ---------------------
         # Criar diretório se não existir
@@ -281,7 +287,8 @@ def backtestRunner(
             avg_profit_trade,
             avg_profit_percentage,
             avg_loss_trade_abs,
-            avg_loss_percentage
+            avg_loss_percentage,
+            tempo_cronometrado
         ], current_data
     except Exception as e:
         print(traceback.format_exc())
@@ -290,6 +297,7 @@ def backtestRunner(
             start_date,
             end_date,
             balance,
+            np.nan,
             np.nan,
             np.nan,
             np.nan,
