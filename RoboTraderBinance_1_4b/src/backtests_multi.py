@@ -54,7 +54,6 @@ moedas = [
     'ETC', # Ethereum Classic
     'POL', # POL (prev. MATIC)
     'USD1', # World Liberty Financial USD
-    'TRUMP', # OFFICIAL TRUMP
     'VET', # VeChain
     'RENDER', # Render
     'FET', # Artificial Superintelligence Alliance
@@ -93,12 +92,11 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 01:30']]
+intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 02:00']]
 
 count = 0
 # Rodando simulação para cada moeda
 for moeda in moedas:
-
     # para cada periodo de candle
     for periodo in periodos_candles:
 
@@ -111,7 +109,7 @@ for moeda in moedas:
     
     count += 1
     if count % 2 == 0:
-        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
+        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
         df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20241222a20250723_15m.parquet', index=False)
 
 print('*'*50, 'TERMINOU DE RODAR', '*'*50)
@@ -121,5 +119,5 @@ print(df.shape)
 # for col in df.select_dtypes(include=['datetimetz']).columns:
 #     df[col] = df[col].dt.tz_localize(None)
 
-pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
+pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
 df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20241222a20250723_15m.parquet', index=False)

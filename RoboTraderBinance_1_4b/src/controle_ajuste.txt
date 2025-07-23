@@ -47,7 +47,7 @@
 'TEMA' => getTEMATradeStrategy
 'Triangular Moving Average' => getTriangularMovingAverageTradeStrategy
 'True Strength Index' => getTrueStrengthIndexTradeStrategy
-'Ultimate Oscillator' => getUltimateOscillatorTradeStrategy
+✅'Ultimate Oscillator' => getUltimateOscillatorTradeStrategy
 ✅'VIDYA' => getVIDYATradeStrategy
 ✅'Volume Weighted Average Price VWAP' => getVolumeWeightedAveragePriceTradeStrategy
 ✅'Williams Alligator' => getWilliamsAlligatorTradeStrategy
