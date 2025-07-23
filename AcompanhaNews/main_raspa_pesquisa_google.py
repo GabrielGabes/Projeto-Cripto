@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.chrome.options import Options
 
 from bs4 import BeautifulSoup
@@ -78,11 +78,32 @@ def send_status_message(mensagem):
     except Exception as e:
         print(f"Exceção ao enviar mensagem: {e}")
 
+def obter_intervalo_do_info():
+    url = f"https://api.telegram.org/bot{BOT_TOKEN_STATUS}/getChat"
+    params = {'chat_id': CHAT_ID_STATUS}
+    try:
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            data = response.json()
+            descricao = data.get('result', {}).get('description', '')
+            intervalo = float(descricao.strip()) * 60  # minutos para segundos
+            intervalo = max(1, int(intervalo))  # garante pelo menos 1 segundo
+            print(f"Intervalo lido da descrição: {intervalo} seg")
+            return intervalo
+        else:
+            print(f"Erro ao obter descrição: {response.text}")
+    except Exception as e:
+        print(f"Erro ao ler info: {e}")
+    return 600  # valor padrão em segundos (10 minutos)
+
 def verificar_status_robo():
     agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    mensagem = f"RPA ACOMPANHANEWS: Online {agora}✅"
+    mensagem = f"RPA ACOMPANHANEWS: Online {agora} ✅"
     send_status_message(mensagem)
-    threading.Timer(600, verificar_status_robo).start()
+
+    intervalo = obter_intervalo_do_info()
+    threading.Timer(intervalo, verificar_status_robo).start()
+    
 #================================================================================
 def buscar_noticias(termo_busca, intervalo="1h"):
     # opções de intervalo 
@@ -164,7 +185,7 @@ if platform.system() == "Windows":
     # caminho_fd = 'C:/Users/gabri/OneDrive/Documentos/Cripto/AcompanhaNews/' #-PC GABRIEL-#
     caminho_fd = 'C:/Users/michael/OneDrive/Documentos/Criptos/AcompanhaNews/' #- PC MICHAEL-#
 else:
-    caminho_fd = '/home/raspgabes/Documents/Projeto-Analise-de-CriptosMoedas/AcompanhaNews/'
+    caminho_fd = '/home/maikola/Documentos/Projeto-Cripto-main/AcompanhaNews/'
 fd = pd.read_csv(caminho_fd + 'registros_noticias.csv', sep=';')
 
 def pesquisa_completa(pesquisa, periodo='1h'):
