@@ -17,7 +17,8 @@ def getWMATradeStrategy(
     period: int = 14,
     short_period: int = 7,
     long_period: int = 21,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return = True
 ):
     """
     Estratégia baseada em WMA (Weighted Moving Average).
@@ -123,4 +124,22 @@ def getWMATradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'wma': stock_data['wma'],
+            'wma_short': stock_data['wma_short'],
+            'wma_long': stock_data['wma_long'],
+            'wma_slope': stock_data['wma_slope'],
+            'wma_short_slope': stock_data['wma_short_slope'],
+            'wma_long_slope': stock_data['wma_long_slope']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

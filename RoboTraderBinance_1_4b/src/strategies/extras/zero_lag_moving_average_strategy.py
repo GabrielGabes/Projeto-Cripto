@@ -18,7 +18,8 @@ def getZeroLagMovingAverageTradeStrategy(
     signal_period: int = 9,
     threshold: float = 0.0,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return = True
 ):
     """
     Estratégia baseada em Zero-Lag Moving Average.
@@ -78,4 +79,19 @@ def getZeroLagMovingAverageTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'zlema': stock_data['zlema'],
+            'signal_line': stock_data['signal_line'],
+            'zlema_diff': stock_data['zlema_diff']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

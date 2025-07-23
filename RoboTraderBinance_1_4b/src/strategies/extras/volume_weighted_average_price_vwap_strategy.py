@@ -17,7 +17,8 @@ def getVolumeWeightedAveragePriceTradeStrategy(
     period: int = 14,
     std_dev_multiplier: float = 1.0,
     reset_daily: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return = True
 ):
     """
     Estratégia baseada em Volume-Weighted Average Price (VWAP).
@@ -118,4 +119,23 @@ def getVolumeWeightedAveragePriceTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'typical_price': stock_data['typical_price'],
+            'vwap': stock_data['vwap'],
+            'std_dev': stock_data['std_dev'],
+            'upper_band': stock_data['upper_band'],
+            'lower_band': stock_data['lower_band'],
+            'position': stock_data['position']
+
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -21,7 +21,8 @@ def getWilliamsAlligatorTradeStrategy(
     jaw_shift: int = 8,
     teeth_shift: int = 5,
     lips_shift: int = 3,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return = True
 ):
     """
     Estratégia baseada em Williams Alligator.
@@ -202,5 +203,21 @@ def getWilliamsAlligatorTradeStrategy(
         print(f" | Alimentação (Venda): {eating_sell}")
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
-    
-    return trade_decision
+
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'median_price': stock_data['median_price'],
+            'jaw_shifted': stock_data['jaw_shifted'],
+            'teeth_shifted': stock_data['teeth_shifted'],
+            'lips_shifted': stock_data['lips_shifted']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

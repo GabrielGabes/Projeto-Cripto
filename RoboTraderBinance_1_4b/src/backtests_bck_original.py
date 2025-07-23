@@ -1,7 +1,12 @@
 # BIBLIOTECAS EXTRAS
 import sys
-# sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
-sys.path.append(r"C:\Users\michael\OneDrive\Documentos\GitHub\Projeto-Cripto\RoboTraderBinance_1_4b\src")
+import getpass # Verificando qual usuario esta executando o codigo
+if getpass.getuser() == 'gabri': 
+    print('g')
+    sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
+elif getpass.getuser() == 'michael':
+    print('m')
+    sys.path.append(r"C:\Users\michael\OneDrive\Documentos\GitHub\Projeto-Cripto\RoboTraderBinance_1_4b\src")
 
 from modules.BinanceTraderBot import BinanceTraderBot
 from binance.client import Client

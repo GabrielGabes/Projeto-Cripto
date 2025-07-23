@@ -19,7 +19,8 @@ def getVIDYATradeStrategy(
     slow_period: int = 21,
     chande_period: int = 10,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return = True
 ):
     """
     Estratégia baseada em VIDYA (Variable Index Dynamic Average).
@@ -155,4 +156,22 @@ def getVIDYATradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            # 'close_price':stock_data['close_price'],
+            'open_time_join':stock_data['open_time'],
+            # 'open_price':stock_data['open_price'],
+            # 'high_price':stock_data['high_price'],
+            # 'low_price':stock_data['low_price'],
+            # 'volume':stock_data['volume'],
+            'vidya': stock_data['vidya'],
+            'fast_vidya': stock_data['fast_vidya'],
+            'slow_vidya': stock_data['slow_vidya'],
+            'signal': stock_data['signal'],
+            'signal_change': stock_data['signal_change'],
+            'price_trend': stock_data['price_trend']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

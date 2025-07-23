@@ -1,6 +1,13 @@
 # BIBLIOTECAS EXTRAS
 import sys
-sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
+import getpass # Verificando qual usuario esta executando o codigo
+if getpass.getuser() == 'gabri': 
+    print('g')
+    sys.path.append(r"C:\Users\gabri\OneDrive\Documentos\Criptos\RoboTraderBinance_1_4b\src")
+elif getpass.getuser() == 'michael':
+    print('m')
+    sys.path.append(r"C:\Users\michael\OneDrive\Documentos\GitHub\Projeto-Cripto\RoboTraderBinance_1_4b\src")
+
 from tests.calculadora_candles import calculadora_candles
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -98,7 +105,7 @@ def backtests_simulador(
     dados_candles = baixar_candles(OPERATION_CODE, DEFAULT_START_DATE, DEFAULT_END_DATE, CANDLE_PERIOD, ajuste=True)
     fim = time.time()
     tempo_cronometrado = fim - inicio
-    print('Tempo baixar_candles (s):', tempo_cronometrado.round(0))
+    print('Tempo baixar_candles (s):', tempo_cronometrado)
     pasta_price_metrics = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_prices_metrics/'
     dados_candles.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '.parquet', index=False)
     # ------------------------------------------------------------------------

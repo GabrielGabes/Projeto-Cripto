@@ -7,13 +7,15 @@ if getpass.getuser() == 'gabri':
 elif getpass.getuser() == 'michael':
     print('m')
     sys.path.append(r"C:\Users\michael\OneDrive\Documentos\GitHub\Projeto-Cripto\RoboTraderBinance_1_4b\src")
-    
+
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from binance.client import Client
 import pandas as pd
-from tests.backtests_simulador import backtests_simulador
+import time
+
+from binance.client import Client
+from tests.baixar_candles import baixar_candles
 # ------------------------------------------------------------------------
 # DATA FRAME PARA CAPTURAR SAIDAS
 df = pd.DataFrame(columns=[
@@ -74,52 +76,23 @@ moedas = [
     'CELO', # Celo
     'SCRT' # Secret Network
           ]
-periodos_candles = [
-            # MINUTOS
-            # # Periodos muito muito curtos
-            # Client.KLINE_INTERVAL_1MINUTE, Client.KLINE_INTERVAL_3MINUTE, 
-            # Client.KLINE_INTERVAL_5MINUTE, 
-            Client.KLINE_INTERVAL_15MINUTE, 
-            # Client.KLINE_INTERVAL_30MINUTE, 
-            
-            # HORAS
-            # Client.KLINE_INTERVAL_1HOUR
-            # # Periodos muito muito longo
-            # , Client.KLINE_INTERVAL_2HOUR, Client.KLINE_INTERVAL_4HOUR, Client.KLINE_INTERVAL_6HOUR, Client.KLINE_INTERVAL_8HOUR, Client.KLINE_INTERVAL_12HOUR,
-            
-            # DIA # SEMANA
-            # Client.KLINE_INTERVAL_1DAY, Client.KLINE_INTERVAL_1WEEK
-            ]
-
-from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
-# intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 01:30']]
+CANDLE_PERIOD = Client.KLINE_INTERVAL_15MINUTE
 
 count = 0
 # Rodando simulação para cada moeda
-for moeda in moedas:
+for NOME_MOEDA in moedas:
+    print('#'*100)
+    print('MOEDA BAIXADA:', NOME_MOEDA)
 
-    # para cada periodo de candle
-    for periodo in periodos_candles:
-
-        # para cada intervalo de data hora        
-        for horarios_lista in intervalos_tempo:
-
-            # Rodando finalmente simulação
-            df_temp = backtests_simulador(moeda, periodo, horarios_lista[0], horarios_lista[1])
-            df = pd.concat([df, df_temp], axis=0, ignore_index=True) # concatenando no dataframe principal
+    STOCK_CODE = NOME_MOEDA  # Código da Criptomoeda
+    OPERATION_CODE = NOME_MOEDA + "USDT"  # Código da operação (cripto + moeda)
     
-    count += 1
-    if count % 2 == 0:
-        pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
-        df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20241222a20250723_15m.parquet', index=False)
+    inicio = time.time()
+    dados_candles = baixar_candles(OPERATION_CODE, '22/12/2024 00:00', '23/07/2025 01:30', CANDLE_PERIOD, ajuste=True)
+    fim = time.time()
+    tempo_cronometrado = fim - inicio
+    print('Tempo baixar_candles (s):', tempo_cronometrado)
+    pasta_price_metrics = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
+    dados_candles.to_parquet(pasta_price_metrics + NOME_MOEDA + '_' + CANDLE_PERIOD + '.parquet', index=False)
 
-print('*'*50, 'TERMINOU DE RODAR', '*'*50)
-print(df.shape)
-
-# # Remove timezone de todas as colunas datetime com tz-aware # caso for salvar como xlsx
-# for col in df.select_dtypes(include=['datetimetz']).columns:
-#     df[col] = df[col].dt.tz_localize(None)
-
-pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/dados_results_final/'
-df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20241222a20250723_15m.parquet', index=False)
+print('='*35, 'FIM', '='*35)
