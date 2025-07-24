@@ -60,6 +60,9 @@ final_result, price_decision_metrics = backtestRunner(
 =======
     strategy_function=getRsiTradeStrategy,
     nome_estrategia="teste",
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     initial_balance=INITIAL_BALANCE,
     start_date=intervalos_tempo[0],
