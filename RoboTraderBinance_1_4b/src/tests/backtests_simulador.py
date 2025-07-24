@@ -113,7 +113,8 @@ def backtests_simulador(
     df = pd.DataFrame(columns=[
         'Estrategia', 'Data_Inicio', 'Data_Fim', 'Saldo_Final', 'Lucro_%', 'Total_Trades',
         'Trades_Lucrativos', 'Valor_Lucro_Total', 'Trades_Preuízo', 'Valor_Preuízo_Total',
-        'Lucro_Médio_Trade', 'Lucro_%_Médio', 'Prejuízo_Médio_Trade', 'Prejuízo_%_Médio'
+        'Lucro_Médio_Trade', 'Lucro_%_Médio', 'Prejuízo_Médio_Trade', 'Prejuízo_%_Médio',
+        'Tempo_Simulacao'
     ])
 
     # ------------------------------------------------------------------------
@@ -1294,14 +1295,3 @@ def backtests_simulador(
     df['Moeda'] = NOME_MOEDA
     df['CANDLE_PERIOD'] = CANDLE_PERIOD
     return df
-
-# df = backtests_simulador(
-#         'UNI', 
-#         CANDLE_PERIOD = '1h', 
-#         DEFAULT_START_DATE='12/03/2025 03:00',
-#         DEFAULT_END_DATE='15/03/2025 03:00'
-#         )
-# pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/RoboTraderBinance_1_4b/src/tests/graficos/'
-# df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra.parquet', index=False)
-# df = pd.read_parquet(pasta_salvar + 'DADOS_SIMULADOS_1semana_extra.parquet')
-# df.head().T

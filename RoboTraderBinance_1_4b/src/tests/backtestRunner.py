@@ -100,6 +100,7 @@ def backtestRunner(
         # ------------------------------------------------------------------------
         # 🔄 EXECUÇÃO DO BACKTEST 🔄
         count = 0
+        extended_data['signal'] = np.nan
         extended_data['acao_tomada'] = np.nan
         # Loop de execução do backtest: percorre todos os candles do conjunto estendido
         for i in range(0, len(extended_data)+1):
@@ -124,6 +125,8 @@ def backtestRunner(
             # Extraindo as metricas da estrategias
             strategy_metrics = signal[1] # DATAFRAME COM METRICAS DA ESTRATEGIA
             signal = signal[0] # SINAL DE COMPRA OU VENDA
+            extended_data.loc[i, 'signal'] = signal
+
             for coluna in strategy_metrics.columns: # ACRESCENTANDO AS METRICAS DA ESTRATEGIA NO DATAFRAME COM PRECOS
                 if coluna not in extended_data.columns:
                     extended_data[coluna] = np.nan

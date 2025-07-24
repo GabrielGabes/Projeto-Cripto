@@ -26,53 +26,53 @@ df = pd.DataFrame(columns=[
 moedas = [
     # TOP 29 MOEDAS ## 04/06/2025
     'BTC', # Bitcoin
-    'ETH', # Ethereum
-    'XRP', # XRP
-    'BNB', # BNB
-    'SOL', # Solana
-    'DOGE', # Dogecoin
-    'TRX', # TRON
-    'ADA', # Cardano
-    'SUI', # Sui
-    'LINK', # Chainlink
-    'AVAX', # Avalanche
-    'XLM', # Stellar
-    'BCH', # Bitcoin Cash
-    'TON', # Toncoin
-    'SHIB', # Shiba Inu
-    'HBAR', # Hedera
-    'LTC', # Litecoin
-    'DOT', # Polkadot
-    'XMR', # Monero
-    'PEPE', # Pepe
-    'AAVE', # Aave
-    'UNI', # Uniswap
-    'TAO', # Bittensor
-    'APT', # Aptos
-    'NEAR', # NEAR Protocol
-    'ICP', # Internet Computer
-    'ONDO', # Ondo
-    'ETC', # Ethereum Classic
-    'POL', # POL (prev. MATIC)
-    'USD1', # World Liberty Financial USD
-    'VET', # VeChain
-    'RENDER', # Render
-    'FET', # Artificial Superintelligence Alliance
-    'ENA', # Ethena
-    'WLD', # Worldcoin
-    'ARB', # Arbitrum
+    # 'ETH', # Ethereum
+    # 'XRP', # XRP
+    # 'BNB', # BNB
+    # 'SOL', # Solana
+    # 'DOGE', # Dogecoin
+    # 'TRX', # TRON
+    # 'ADA', # Cardano
+    # 'SUI', # Sui
+    # 'LINK', # Chainlink
+    # 'AVAX', # Avalanche
+    # 'XLM', # Stellar
+    # 'BCH', # Bitcoin Cash
+    # 'TON', # Toncoin
+    # 'SHIB', # Shiba Inu
+    # 'HBAR', # Hedera
+    # 'LTC', # Litecoin
+    # 'DOT', # Polkadot
+    # 'XMR', # Monero
+    # 'PEPE', # Pepe
+    # 'AAVE', # Aave
+    # 'UNI', # Uniswap
+    # 'TAO', # Bittensor
+    # 'APT', # Aptos
+    # 'NEAR', # NEAR Protocol
+    # 'ICP', # Internet Computer
+    # 'ONDO', # Ondo
+    # 'ETC', # Ethereum Classic
+    # 'POL', # POL (prev. MATIC)
+    # 'USD1', # World Liberty Financial USD
+    # 'VET', # VeChain
+    # 'RENDER', # Render
+    # 'FET', # Artificial Superintelligence Alliance
+    # 'ENA', # Ethena
+    # 'WLD', # Worldcoin
+    # 'ARB', # Arbitrum
 
-    ## TOP MOEDAS BOAS E FORA DOS HOLOFOTES ##
-    'ALGO', # Algorand
-    'NEAR', # Near Protocol
-    'FLOW', # Flow
-    'KDA', # Kadena
-    'HBAR', # Hedera Hashgraph
-    'ROSE', # Oasis Network
-    'OCEAN', # Ocean Protocol
-    'AR', # Arweave
-    'CELO', # Celo
-    'SCRT' # Secret Network
+    # ## TOP MOEDAS BOAS E FORA DOS HOLOFOTES ##
+    # 'ALGO', # Algorand
+    # 'NEAR', # Near Protocol
+    # 'FLOW', # Flow
+    # 'KDA', # Kadena
+    # 'HBAR', # Hedera Hashgraph
+    # 'ROSE', # Oasis Network
+    # 'OCEAN', # Ocean Protocol
+    # 'AR', # Arweave
+    # 'CELO', # Celo
+    # 'SCRT' # Secret Network
           ]
 periodos_candles = [
             # MINUTOS
@@ -93,7 +93,11 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:30']]
+# intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:30']]
+intervalos_tempo = [['22/12/2024 00:00', '26/12/2024 04:00'],
+                    ['22/12/2024 00:00', '31/12/2024 04:00'],
+                    ['22/12/2024 00:00', '10/01/2025 13:00'],
+                    ['22/12/2024 00:00', '20/01/2025 19:00']]
 
 count = 0
 # Rodando simulação para cada moeda
