@@ -158,8 +158,6 @@ def getEhlerFisherTransformTradeStrategy(
             'open_time_join': stock_data['open_time'],
             'fisher': stock_data['fisher'],
             'fisher_signal': stock_data['fisher_signal'],
-            'buy_signal': buy_signal,
-            'sell_signal': sell_signal
         }
         metrics_df = pd.DataFrame(metrics)
         return trade_decision, metrics_df

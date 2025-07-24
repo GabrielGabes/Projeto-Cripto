@@ -105,8 +105,6 @@ def getATRTradeStrategy(
             'atr': stock_data['atr'],
             'atr_change': stock_data['atr_change'],
             'price_direction': stock_data['price_direction'],
-            'buy_signal': stock_data['buy_signal'],
-            'sell_signal': stock_data['sell_signal']
         }
         metrics = pd.DataFrame(metrics)
         return trade_decision, metrics

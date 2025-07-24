@@ -119,7 +119,6 @@ def getDonchianChannelsTradeStrategy(
             'upper_band': stock_data['upper_band'],
             'middle_band': stock_data['middle_band'],
             'lower_band': stock_data['lower_band'],
-            'signal': stock_data['signal'],
         }
         if use_midline:
             metrics['mid_cross'] = stock_data['mid_cross']

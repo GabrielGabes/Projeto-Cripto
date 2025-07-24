@@ -124,8 +124,6 @@ def getArnaudLegouxMovingAverageTradeStrategy(
             'alma': stock_data['alma'],
             'fast_alma': stock_data['fast_alma'],
             'slow_alma': stock_data['slow_alma'],
-            'signal': stock_data['signal'],
-            'signal_change': stock_data['signal_change']
         })
         return trade_decision, metrics
     else:
