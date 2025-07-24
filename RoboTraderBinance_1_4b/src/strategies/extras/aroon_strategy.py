@@ -18,7 +18,8 @@ def getAroonTradeStrategy(
     bullish_threshold: int = 70,
     bearish_threshold: int = 30,
     crossover_signal: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Aroon.
@@ -114,4 +115,17 @@ def getAroonTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = pd.DataFrame({
+            'open_time_join': stock_data['open_time'],
+            'high_price': stock_data['high_price'],
+            'low_price': stock_data['low_price'],
+            'aroon_up': stock_data['aroon_up'],
+            'aroon_down': stock_data['aroon_down'],
+            'aroon_oscillator': stock_data['aroon_oscillator'],
+            'level_signal': stock_data['level_signal'],
+            'cross_signal': stock_data['cross_signal']
+        })
+        return trade_decision, metrics
+    else:
+        return trade_decision

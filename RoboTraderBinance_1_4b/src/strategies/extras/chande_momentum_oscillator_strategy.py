@@ -17,7 +17,8 @@ def getChandeMomentumOscillatorTradeStrategy(
     period: int = 14,
     overbought: int = 50,
     oversold: int = -50,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Chande Momentum Oscillator.
@@ -113,4 +114,17 @@ def getChandeMomentumOscillatorTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'price_change': stock_data['price_change'],
+            'gain': stock_data['gain'],
+            'loss': stock_data['loss'],
+            'sum_gains': stock_data['sum_gains'],
+            'sum_losses': stock_data['sum_losses'],
+            'cmo': stock_data['cmo']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -18,7 +18,8 @@ def getElderRayTradeStrategy(
     ma_type: str = 'ema',
     bull_power_threshold: float = 0.0,
     bear_power_threshold: float = 0.0,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Elder Ray.
@@ -108,4 +109,15 @@ def getElderRayTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'ma': stock_data['ma'],
+            'bull_power': stock_data['bull_power'],
+            'bear_power': stock_data['bear_power'],
+            'ma_trend_up': ma_trend_up,
+        }
+        metrics_df = pd.DataFrame(metrics)
+        return trade_decision, metrics_df
+    else:
+        return trade_decision

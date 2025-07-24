@@ -5,7 +5,8 @@ def getSuperTrendTradeStrategy(
     stock_data: pd.DataFrame, 
     atr_period: int = 10, 
     multiplier: float = 3.0, 
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Implementação da estratégia Supertrend para trading.
@@ -122,8 +123,13 @@ def getSuperTrendTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
-
-# Criar alias para manter compatibilidade com ambas as grafias
-getSupertrendTradeStrategy = getSuperTrendTradeStrategy
-getSupertrendTradeStrategy = getSuperTrendTradeStrategy
+    if all_metrics_return:
+        metrics = pd.DataFrame({
+            'open_time_join': stock_data['open_time'],
+            'ATR': stock_data['ATR'],
+            'Supertrend': stock_data['Supertrend'],
+            'Trend': stock_data['Trend']
+        })
+        return trade_decision, metrics
+    else:
+        return trade_decision

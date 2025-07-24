@@ -17,7 +17,8 @@ def getATRTradeStrategy(
     period: int = 14,
     atr_threshold: float = 1.5,
     lookback_period: int = 5,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em ATR (Average True Range).
@@ -95,4 +96,19 @@ def getATRTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'high_price': stock_data['high_price'],
+            'low_price': stock_data['low_price'],
+            'close_price': stock_data['close_price'],
+            'atr': stock_data['atr'],
+            'atr_change': stock_data['atr_change'],
+            'price_direction': stock_data['price_direction'],
+            'buy_signal': stock_data['buy_signal'],
+            'sell_signal': stock_data['sell_signal']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -46,7 +46,7 @@ def getRsiTradeStrategy(stock_data: pd.DataFrame, low=30, high=70, verbose=True,
     if all_metrics_return == True:
         metrics = {
             # 'close_price':stock_data['close_price'],
-            'open_time_join':stock_data['open_time'],
+            'open_time_join': stock_data['open_time'],
             # 'open_price':stock_data['open_price'],
             # 'high_price':stock_data['high_price'],
             # 'low_price':stock_data['low_price'],

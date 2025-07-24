@@ -17,7 +17,8 @@ def getElderForceIndexTradeStrategy(
     period: int = 14,
     short_period: int = 2,
     long_period: int = 13,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Elder Force Index.
@@ -102,4 +103,14 @@ def getElderForceIndexTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'force_index_raw': stock_data['force_index_raw'],
+            'force_index_short': stock_data['force_index_short'],
+            'force_index_long': stock_data['force_index_long'],
+        }
+        metrics_df = pd.DataFrame(metrics)
+        return trade_decision, metrics_df
+    else:
+        return trade_decision

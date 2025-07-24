@@ -17,7 +17,8 @@ def getChaikinOscillatorTradeStrategy(
     period: int = 14,
     fast_period: int = 3,
     slow_period: int = 10,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Chaikin Oscillator.
@@ -117,4 +118,17 @@ def getChaikinOscillatorTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'mf_multiplier': stock_data['mf_multiplier'],
+            'mf_volume': stock_data['mf_volume'],
+            'adl': stock_data['adl'],
+            'adl_ema_fast': stock_data['adl_ema_fast'],
+            'adl_ema_slow': stock_data['adl_ema_slow'],
+            'chaikin_osc': stock_data['chaikin_osc']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

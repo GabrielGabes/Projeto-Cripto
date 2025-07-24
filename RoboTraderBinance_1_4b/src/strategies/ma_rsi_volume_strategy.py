@@ -10,6 +10,7 @@ def getMovingAverageRSIVolumeStrategy(
     rsi_oversold: int = 30,
     volume_multiplier: float = 1.5,
     verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia de Médias Móveis com confirmação de RSI e Volume.
@@ -69,4 +70,16 @@ def getMovingAverageRSIVolumeStrategy(
         print(f' | Decisão: {"Comprar" if trade_decision == True else "Vender" if trade_decision == False else "Nenhuma"}')
         print("-------")
 
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'ma_fast': stock_data['ma_fast'],
+            'ma_slow': stock_data['ma_slow'],
+            'rsi': stock_data['rsi'],
+            'volume': stock_data['volume'],
+            'volume_avg': stock_data['volume_avg']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

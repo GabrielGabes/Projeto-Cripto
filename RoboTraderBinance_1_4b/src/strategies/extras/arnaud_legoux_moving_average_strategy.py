@@ -20,7 +20,8 @@ def getArnaudLegouxMovingAverageTradeStrategy(
     fast_period: int = 9,
     slow_period: int = 21,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Arnaud Legoux Moving Average (ALMA).
@@ -116,4 +117,16 @@ def getArnaudLegouxMovingAverageTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = pd.DataFrame({
+            'open_time_join': stock_data['open_time'],
+            'close_price': stock_data['close_price'],
+            'alma': stock_data['alma'],
+            'fast_alma': stock_data['fast_alma'],
+            'slow_alma': stock_data['slow_alma'],
+            'signal': stock_data['signal'],
+            'signal_change': stock_data['signal_change']
+        })
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -3,7 +3,7 @@ import pandas as pd
 
 # Estratégia de Antecipação de Média Móvel
 def getMovingAverageAntecipationTradeStrategy(
-    stock_data: pd.DataFrame, volatility_factor: float, fast_window=7, slow_window=40, verbose=True
+    stock_data: pd.DataFrame, volatility_factor: float, fast_window=7, slow_window=40, verbose=True, all_metrics_return=True
 ):
     # Garantimos que há dados suficientes antes de calcular as médias móveis
     if len(stock_data) < slow_window:
@@ -73,4 +73,13 @@ def getMovingAverageAntecipationTradeStrategy(
         print(f' | Decisão: {"Comprar" if ma_trade_decision == True else "Vender" if ma_trade_decision == False else "Nenhuma"}')
         print("-------")
 
-    return ma_trade_decision
+        if all_metrics_return:
+            metrics = pd.DataFrame({
+                'open_time_join': stock_data['open_time'],
+                'ma_fast': stock_data['ma_fast'],
+                'ma_slow': stock_data['ma_slow'],
+                'volatility': stock_data['volatility']
+            })
+        return ma_trade_decision, metrics
+    else:
+        return ma_trade_decision

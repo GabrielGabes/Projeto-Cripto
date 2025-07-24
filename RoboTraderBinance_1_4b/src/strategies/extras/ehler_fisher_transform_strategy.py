@@ -16,7 +16,8 @@ def getEhlerFisherTransformTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     signal_period: int = 3,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Ehler Fisher Transform.
@@ -152,4 +153,15 @@ def getEhlerFisherTransformTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'fisher': stock_data['fisher'],
+            'fisher_signal': stock_data['fisher_signal'],
+            'buy_signal': buy_signal,
+            'sell_signal': sell_signal
+        }
+        metrics_df = pd.DataFrame(metrics)
+        return trade_decision, metrics_df
+    else:
+        return trade_decision

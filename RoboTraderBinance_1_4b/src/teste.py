@@ -8,10 +8,8 @@ from dotenv import load_dotenv
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-from tests.calculadora_candles import calculadora_candles
 from tests.baixar_candles import baixar_candles
 
-from modules.BinanceTraderBot import BinanceTraderBot
 from binance.client import Client
 from tests.backtestRunner import backtestRunner
 
@@ -53,12 +51,12 @@ df = pd.DataFrame(columns=[
 # ------------------------------------------------------------------------
 # ⏬ SELEÇÃO DE ESTRATÉGIAS ⏬
 
-from strategies.rsi_strategy import *
+from strategies.moving_average import *
 
 final_result, price_decision_metrics = backtestRunner(
     stock_data=dados_candles,
-    strategy_function=getRsiTradeStrategy,
-    nome_estrategia="getRsiTradeStrategy",
+    strategy_function=getMovingAverageTradeStrategy,
+    nome_estrategia=getMovingAverageTradeStrategy,
     initial_balance=INITIAL_BALANCE,
     start_date=intervalos_tempo[0],
     end_date=intervalos_tempo[1],

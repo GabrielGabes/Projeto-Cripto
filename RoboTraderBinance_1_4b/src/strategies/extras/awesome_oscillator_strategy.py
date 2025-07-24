@@ -17,7 +17,8 @@ def getAwesomeOscillatorTradeStrategy(
     period: int = 14,
     fast_period: int = 5,
     slow_period: int = 34,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Awesome Oscillator.
@@ -123,4 +124,19 @@ def getAwesomeOscillatorTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'midpoint': stock_data['midpoint'],
+            'ao_fast': stock_data['ao_fast'],
+            'ao_slow': stock_data['ao_slow'],
+            'ao': stock_data['ao'],
+            'ao_prev': stock_data['ao_prev'],
+            'ao_prev2': stock_data['ao_prev2'],
+            'ao_diff': stock_data['ao_diff'],
+            'ao_diff_prev': stock_data['ao_diff_prev']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

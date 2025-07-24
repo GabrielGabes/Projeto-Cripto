@@ -17,7 +17,8 @@ def getDonchianChannelsTradeStrategy(
     period: int = 14,
     breakout_mode: bool = True,
     use_midline: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Donchian Channels.
@@ -112,4 +113,19 @@ def getDonchianChannelsTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'upper_band': stock_data['upper_band'],
+            'middle_band': stock_data['middle_band'],
+            'lower_band': stock_data['lower_band'],
+            'signal': stock_data['signal'],
+        }
+        if use_midline:
+            metrics['mid_cross'] = stock_data['mid_cross']
+        
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

@@ -18,7 +18,8 @@ def getALMATradeStrategy(
     sigma: float = 6.0,
     offset: float = 0.85,
     signal_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em ALMA (Arnaud Legoux Moving Average).
@@ -141,4 +142,14 @@ def getALMATradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'ALMA': stock_data['alma'],
+            'ALMA_Signal': stock_data['alma_signal'],
+            'ALMA_Slope': stock_data['alma_slope']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

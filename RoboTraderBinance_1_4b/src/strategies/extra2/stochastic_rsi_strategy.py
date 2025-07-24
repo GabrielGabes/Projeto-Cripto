@@ -1,7 +1,7 @@
 import pandas as pd
 from indicators import Indicators
 
-def getStochasticRsiStrategy(stock_data, rsi_period=14, stoch_period=14, k_period=3, d_period=3, verbose=True):
+def getStochasticRsiStrategy(stock_data, rsi_period=14, stoch_period=14, k_period=3, d_period=3, verbose=True, all_metrics_return=True):
     """
     Estratégia baseada no Stochastic RSI.
     
@@ -36,22 +36,28 @@ def getStochasticRsiStrategy(stock_data, rsi_period=14, stoch_period=14, k_perio
         print(f" | Linha %K: {last_k:.2f}")
         print(f" | Linha %D: {last_d:.2f}")
         
-    # Regras de trading
+    trade_decision = None
+    
     if last_k > 80 and last_d > 80 and last_k < last_d:
-        # Se ambos acima de 80 e %K cruza para baixo do %D = Sobrecomprado (venda)
         if verbose:
             print(" | Decisão: Vender (sobrecomprado)")
-        return False
+        trade_decision = False
     elif last_k < 20 and last_d < 20 and last_k > last_d:
-        # Se ambos abaixo de 20 e %K cruza para cima do %D = Sobrevendido (compra)
         if verbose:
             print(" | Decisão: Comprar (sobrevendido)")
-        return True
+        trade_decision = True
     else:
         if verbose:
             print(" | Decisão: Nenhuma")
-        return None
+        trade_decision = None
 
-# No final do arquivo, adicione este alias
-Stochastic_RSI = getStochasticRsiStrategy
-StochasticRSI = getStochasticRsiStrategy 
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'stoch_rsi_k': k_line,
+            'stoch_rsi_d': d_line,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

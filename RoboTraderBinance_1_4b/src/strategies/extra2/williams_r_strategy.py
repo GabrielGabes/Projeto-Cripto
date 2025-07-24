@@ -6,7 +6,8 @@ def getWilliamsRTradeStrategy(
     period: int = 14,
     overbought: float = -20,
     oversold: float = -80,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia Williams %R para negociação.
@@ -72,6 +73,12 @@ def getWilliamsRTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
-
-Williams_R = getWilliamsRTradeStrategy
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'williams_r': stock_data['williams_r']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

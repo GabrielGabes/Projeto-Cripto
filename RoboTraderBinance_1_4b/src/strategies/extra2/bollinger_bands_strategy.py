@@ -6,7 +6,8 @@ def getBollingerBandsTradeStrategy(
     stock_data: pd.DataFrame,
     window: int = 20,
     num_std: float = 2.0,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia de Bandas de Bollinger para negociação.
@@ -63,4 +64,15 @@ def getBollingerBandsTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return == True:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'middle_band': stock_data['middle_band'],
+            'upper_band': stock_data['upper_band'],
+            'lower_band': stock_data['lower_band'],
+            '%B': (stock_data['close_price'] - stock_data['lower_band']) / (stock_data['upper_band'] - stock_data['lower_band'])
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

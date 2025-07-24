@@ -10,7 +10,8 @@ def getStochRSITradeStrategy(
     d_period: int = 3,
     overbought: int = 80,
     oversold: int = 20,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia Stochastic RSI - combina RSI e Stochastic.
@@ -71,7 +72,17 @@ def getStochRSITradeStrategy(
         print(f' | Decisão: {"Comprar" if trade_decision == True else "Vender" if trade_decision == False else "Nenhuma"}')
         print("-------")
     
-    return trade_decision
-
-Stochastic_RSI = getStochRSITradeStrategy
-StochasticRSI = getStochRSITradeStrategy 
+    if all_metrics_return:
+        stock_data['rsi'] = rsi
+        stock_data['stoch_rsi'] = stoch_rsi
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'RSI': stock_data['rsi'],
+            'Stoch_RSI': stock_data['stoch_rsi'],
+            'K': stock_data['k'],
+            'D': stock_data['d']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

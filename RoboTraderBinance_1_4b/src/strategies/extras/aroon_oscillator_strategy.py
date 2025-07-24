@@ -18,7 +18,8 @@ def getAroonOscillatorTradeStrategy(
     overbought: int = 50,
     oversold: int = -50,
     zero_cross_signal: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Aroon Oscillator.
@@ -92,5 +93,17 @@ def getAroonOscillatorTradeStrategy(
         print(f" | Cruzamento do Zero: {'Positivo' if last_zero_cross == 1 else 'Negativo' if last_zero_cross == -1 else 'Nenhum'}")
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
-    
-    return trade_decision
+ 
+    if all_metrics_return:
+        metrics = pd.DataFrame({
+            'open_time_join': stock_data['open_time'],
+            'high_price': stock_data['high_price'],
+            'low_price': stock_data['low_price'],
+            'aroon_up': stock_data['aroon_up'],
+            'aroon_down': stock_data['aroon_down'],
+            'aroon_oscillator': stock_data['aroon_oscillator'],
+            'zero_cross': stock_data['zero_cross']
+        })
+        return trade_decision, metrics
+    else:
+        return trade_decision

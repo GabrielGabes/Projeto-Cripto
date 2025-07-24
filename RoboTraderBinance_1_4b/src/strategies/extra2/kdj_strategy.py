@@ -9,7 +9,8 @@ def getKDJTradeStrategy(
     j_period: int = 3,
     overbought: int = 80,
     oversold: int = 20,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia KDJ (Stochastic Oscillator) para negociação.
@@ -85,4 +86,16 @@ def getKDJTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'RSV': stock_data['rsv'],
+            'K': stock_data['k'],
+            'D': stock_data['d'],
+            'J': stock_data['j']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    
+    else:
+        return trade_decision
