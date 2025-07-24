@@ -93,7 +93,7 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:00']]
+intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:30']]
 
 count = 0
 # Rodando simulação para cada moeda
