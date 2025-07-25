@@ -73,13 +73,14 @@ def getMovingAverageAntecipationTradeStrategy(
         print(f' | Decisão: {"Comprar" if ma_trade_decision == True else "Vender" if ma_trade_decision == False else "Nenhuma"}')
         print("-------")
 
-        if all_metrics_return:
-            metrics = pd.DataFrame({
-                'open_time_join': stock_data['open_time'],
-                'ma_fast': stock_data['ma_fast'],
-                'ma_slow': stock_data['ma_slow'],
-                'volatility': stock_data['volatility']
-            })
+    if all_metrics_return:
+        metrics = pd.DataFrame({
+            'open_time_join': stock_data['open_time'],
+            'ma_fast': stock_data['ma_fast'],
+            'ma_slow': stock_data['ma_slow'],
+            'volatility': stock_data['volatility']
+        })
         return ma_trade_decision, metrics
+    
     else:
         return ma_trade_decision

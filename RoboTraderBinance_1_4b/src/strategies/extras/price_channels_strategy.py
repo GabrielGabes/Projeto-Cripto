@@ -16,7 +16,8 @@ def getPriceChannelsTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     confirm_periods: int = 2,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Price Channels.
@@ -138,4 +139,28 @@ def getPriceChannelsTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_close': current_close,
+            'current_upper': current_upper,
+            'current_lower': current_lower,
+            'current_mid': current_mid,
+            'current_width': current_width,
+            'current_width_pct': current_width_pct,
+            'is_above_upper': is_above_upper,
+            'is_below_lower': is_below_lower,
+            'is_inside_channel': is_inside_channel,
+            'confirm_upper_breakout_count': confirm_upper_breakout,
+            'confirm_lower_breakout_count': confirm_lower_breakout,
+            'is_upper_breakout': is_upper_breakout,
+            'is_lower_breakout': is_lower_breakout,
+            'is_expanding': is_expanding,
+            'is_contracting': is_contracting,
+            'use_mean_reversion': use_mean_reversion,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

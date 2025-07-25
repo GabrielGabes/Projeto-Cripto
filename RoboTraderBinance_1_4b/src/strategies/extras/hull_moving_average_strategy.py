@@ -16,7 +16,8 @@ def getHullMovingAverageTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     fast_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Hull Moving Average.
@@ -120,4 +121,17 @@ def getHullMovingAverageTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'close_price': stock_data['close_price'],
+            'hma': stock_data['hma'],
+            'hma_fast': stock_data['hma_fast'],
+            'hma_slope': stock_data['hma_slope'],
+            'hma_fast_slope': stock_data['hma_fast_slope'],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

@@ -42,13 +42,17 @@ def obter_intervalo_do_info():
         print(f"Erro ao ler info: {e}")
     return 600  # valor padrão em segundos (10 minutos)
 
+timer_status = None  # variável global para controlar o timer
+
 def verificar_status_robo():
+    global timer_status
     agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     mensagem = f"RPA INDICADORES DIARIOS: Online {agora} ✅"
     send_status_message(mensagem)
 
     intervalo = obter_intervalo_do_info()
-    threading.Timer(intervalo, verificar_status_robo).start()
+    timer_status = threading.Timer(intervalo, verificar_status_robo)
+    timer_status.start()
     
 #================================================================================
 # Substitua pelos seus valores
@@ -76,7 +80,13 @@ while True:
             print(f"Mensagens enviadas ao Telegram às {now.strftime('%H:%M:%S')}")
         except Exception as e:
             print(f"Erro ao executar consultas ou enviar mensagens: {e}")
-
+            message = f"Erro ao executar consultas ou enviar mensagens: {e}"
+            send_telegram_message(message)
+             # Cancela o timer do status
+            if timer_status:
+                timer_status.cancel()
+            # Finaliza o programa
+            break
         time.sleep(60)  # Espera 1 minuto para evitar execução dupla
     else:
         time.sleep(90)  # Checa a cada 5 segundos até chegar o momento certo

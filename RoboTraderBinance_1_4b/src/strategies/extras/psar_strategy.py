@@ -18,7 +18,8 @@ def getPSARTradeStrategy(
     af_start: float = 0.02,
     af_increment: float = 0.02,
     af_max: float = 0.2,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em PSAR (Parabolic Stop and Reverse).
@@ -156,5 +157,19 @@ def getPSARTradeStrategy(
         print(f" | Mudança para Tendência de Baixa: {sell_signal}")
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
-    
-    return trade_decision
+        
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_close': current_close,
+            'current_psar': current_psar,
+            'current_trend': current_trend,
+            'af_start': af_start,
+            'af_increment': af_increment,
+            'af_max': af_max,
+            'trend_changes': stock_data['trend'].diff().iloc[-1],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

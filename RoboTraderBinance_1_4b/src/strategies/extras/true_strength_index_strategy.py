@@ -20,7 +20,8 @@ def getTrueStrengthIndexTradeStrategy(
     overbought: float = 25.0,
     oversold: float = -25.0,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em True Strength Index.
@@ -142,4 +143,17 @@ def getTrueStrengthIndexTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'tsi': last_tsi,
+            'tsi_signal': last_signal,
+            'tsi_histogram': last_histogram,
+            'level_signal': last_level_signal,
+            'cross_signal': last_cross_signal,
+            'zero_cross': last_zero_cross,
+        }
+        metrics = pd.DataFrame([metrics])
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -15,7 +15,8 @@ sys.path.insert(0, SRC_DIR)
 def getMarketFacilitationIndexTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Market Facilitation Index (MFI).
@@ -129,4 +130,23 @@ def getMarketFacilitationIndexTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'mfi': current_mfi,
+            'mfi_change': current_mfi_change,
+            'volume_change': current_volume_change,
+            'green': current_green,
+            'fade': current_fade,
+            'fake': current_fake,
+            'squat': current_squat,
+            'green_sequence': green_sequence,
+            'fade_sequence': fade_sequence,
+            'fake_sequence': fake_sequence,
+            'squat_sequence': squat_sequence,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

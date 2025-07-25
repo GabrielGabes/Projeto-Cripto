@@ -18,7 +18,8 @@ def getKAMATradeStrategy(
     fast_efr: int = 2,
     slow_efr: int = 30,
     signal_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em KAMA (Kaufman's Adaptive Moving Average).
@@ -140,5 +141,18 @@ def getKAMATradeStrategy(
         print(f" | Cruzamento de KAMA e Sinal (Para Baixo): {kama_cross_down}")
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
-    
-    return trade_decision
+        
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'close_price': stock_data['close_price'],
+            'kama': stock_data['kama'],
+            'kama_signal': stock_data['kama_signal'],
+            'kama_slope': stock_data['kama_slope'],
+            'efficiency_ratio': stock_data['efficiency_ratio'],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

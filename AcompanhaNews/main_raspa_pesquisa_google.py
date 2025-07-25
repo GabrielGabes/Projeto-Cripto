@@ -96,14 +96,18 @@ def obter_intervalo_do_info():
         print(f"Erro ao ler info: {e}")
     return 600  # valor padrão em segundos (10 minutos)
 
+timer_status = None
+
 def verificar_status_robo():
+    global timer_status
     agora = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     mensagem = f"RPA ACOMPANHANEWS: Online {agora} ✅"
     send_status_message(mensagem)
 
     intervalo = obter_intervalo_do_info()
-    threading.Timer(intervalo, verificar_status_robo).start()
-    
+    timer_status = threading.Timer(intervalo, verificar_status_robo)
+    timer_status.start()
+
 #================================================================================
 def buscar_noticias(termo_busca, intervalo="1h"):
     # opções de intervalo 
@@ -262,9 +266,11 @@ while True:
         rodar_pesquisas()
         time.sleep(60*5)
     except:
-        mensagem = 'erro fatal! o codigo foi encerrado.\n' + traceback.print_exc()
+        mensagem = 'erro fatal! o código foi encerrado.\n' + traceback.format_exc()
         send_telegram_message(mensagem)
-        break
+        if timer_status:
+            timer_status.cancel()
+        exit(1)
 
 
 #===============================================================================

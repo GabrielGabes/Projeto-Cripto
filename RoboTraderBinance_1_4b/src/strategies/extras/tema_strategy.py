@@ -17,7 +17,8 @@ def getTEMATradeStrategy(
     period: int = 14,
     short_period: int = 7,
     long_period: int = 21,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em TEMA (Triple Exponential Moving Average).
@@ -129,4 +130,25 @@ def getTEMATradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_close': current_close,
+            'current_tema': current_tema,
+            'current_tema_short': current_tema_short,
+            'current_tema_long': current_tema_long,
+            'current_tema_slope': current_tema_slope,
+            'is_uptrend': is_uptrend,
+            'short_above_long': short_above_long,
+            'price_cross_up': price_cross_up,
+            'price_cross_down': price_cross_down,
+            'short_cross_up': short_cross_up,
+            'short_cross_down': short_cross_down,
+            'buy_signal': buy_signal,
+            'sell_signal': sell_signal
+        }
+        metrics = pd.DataFrame([metrics])
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

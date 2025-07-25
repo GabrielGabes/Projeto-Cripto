@@ -18,7 +18,8 @@ def getLinearRegressionTradeStrategy(
     period: int = 14,
     deviation_mult: float = 2.0,
     forecast_periods: int = 3,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Linear Regression.
@@ -184,5 +185,26 @@ def getLinearRegressionTradeStrategy(
         print(f" | Previsão Mais Alta: {is_forecast_higher}")
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
-    
-    return trade_decision
+        
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'close_price': current_close,
+            'regression': current_regression,
+            'upper_channel': current_upper,
+            'lower_channel': current_lower,
+            'slope': current_slope,
+            'r_squared': current_r_squared,
+            'forecast': current_forecast,
+            'is_above_upper': is_above_upper,
+            'is_below_lower': is_below_lower,
+            'is_inside_channel': is_inside_channel,
+            'is_uptrend': is_uptrend,
+            'is_strong_uptrend': is_strong_uptrend,
+            'is_strong_downtrend': is_strong_downtrend,
+            'is_forecast_higher': is_forecast_higher,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
