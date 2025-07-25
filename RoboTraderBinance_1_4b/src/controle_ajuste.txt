@@ -9,7 +9,7 @@
 ✅'KDJ' => getKDJTradeStrategy
 ✅'MACD' => getMACDTradeStrategy
 ✅'Stochastic RSI' => getStochRSITradeStrategy
-✅'Supertrend' => getSuperTrendTradeStrategy
+(lento)✅'Supertrend' => getSuperTrendTradeStrategy 
 ✅'Williams %R' => getWilliamsRTradeStrategy
 ✅'Accelerator Oscillator' => getAcceleratorOscillatorTradeStrategy
 ✅'ALMA' => getALMATradeStrategy
@@ -24,7 +24,7 @@
 ✅'Detrended Price Oscillator' => getDetrendedPriceOscillatorTradeStrategy
 ✅'Donchian Channel' => getDonchianChannelTradeStrategy
 ✅'Donchian Channels v2' => getDonchianChannelsTradeStrategy
-✅'Ehler Fisher Transform' => getEhlerFisherTransformTradeStrategy
+(lento)✅'Ehler Fisher Transform' => getEhlerFisherTransformTradeStrategy
 ✅'Elder Force Index' => getElderForceIndexTradeStrategy
 ✅'Elder Ray' => getElderRayTradeStrategy
 ✅'Force Index' => getForceIndexTradeStrategy
