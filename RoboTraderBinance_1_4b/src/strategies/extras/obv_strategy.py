@@ -16,7 +16,8 @@ def getOBVTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     signal_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em OBV (On-Balance Volume).
@@ -113,4 +114,20 @@ def getOBVTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_obv': current_obv,
+            'current_obv_ma': current_obv_ma,
+            'current_obv_signal': current_obv_signal,
+            'current_histogram': current_histogram,
+            'previous_histogram': previous_histogram,
+            'cross_above': cross_above,
+            'cross_below': cross_below,
+            'divergence_buy': divergence_buy,
+            'divergence_sell': divergence_sell,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

@@ -16,7 +16,8 @@ def getFisherTransformTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     signal_period: int = 3,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Fisher Transform.
@@ -125,4 +126,16 @@ def getFisherTransformTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'fisher': stock_data['fisher'],
+            'fisher_signal': stock_data['fisher_signal'],
+            'value': stock_data['value'],
+            'price_mid': stock_data['price_mid'],
+            'period_high': stock_data['period_high'],
+            'period_low': stock_data['period_low'],
+        }
+        return trade_decision, pd.DataFrame(metrics)
+    else:
+        return trade_decision

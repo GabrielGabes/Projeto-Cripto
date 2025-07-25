@@ -50,20 +50,12 @@ print(dados_candles.shape)
 # ------------------------------------------------------------------------
 # ⏬ SELEÇÃO DE ESTRATÉGIAS ⏬
 
-from strategies.moving_average import *
+from strategies.extras.fractals_strategy import *
 
 final_result, price_decision_metrics = backtestRunner(
     stock_data=dados_candles,
-<<<<<<< Updated upstream
-    strategy_function=getMovingAverageTradeStrategy,
-    nome_estrategia=getMovingAverageTradeStrategy,
-=======
-    strategy_function=getRsiTradeStrategy,
-    nome_estrategia="teste",
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+    strategy_function=getFractalsTradeStrategy,
+    nome_estrategia=getFractalsTradeStrategy,
     initial_balance=INITIAL_BALANCE,
     start_date=intervalos_tempo[0],
     end_date=intervalos_tempo[1],

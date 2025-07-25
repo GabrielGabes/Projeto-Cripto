@@ -17,7 +17,8 @@ def getMfiTradeStrategy(
     period: int = 14,
     overbought: int = 80,
     oversold: int = 20,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = False
 ):
     """
     Estratégia baseada em MFI (Money Flow Index).
@@ -100,4 +101,17 @@ def getMfiTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'mfi': current_mfi,
+            'prev_mfi': prev_mfi,
+            'is_overbought': is_overbought,
+            'is_oversold': is_oversold,
+            'is_rising': is_rising,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

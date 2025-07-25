@@ -15,7 +15,8 @@ sys.path.insert(0, SRC_DIR)
 def getHilbertTransformTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Hilbert Transform.
@@ -91,4 +92,19 @@ def getHilbertTransformTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'ht_trend': stock_data['ht_trend'],
+            'ht_signal': stock_data['ht_signal'],
+            'ht_trend_signal': stock_data['ht_trend_signal'],
+            'smooth_inphase': stock_data['smooth_inphase'],
+            'smooth_quadrature': stock_data['smooth_quadrature'],
+            'inphase': stock_data['inphase'],
+            'quadrature': stock_data['quadrature'],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

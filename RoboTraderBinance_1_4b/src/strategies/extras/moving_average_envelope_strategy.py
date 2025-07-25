@@ -17,7 +17,8 @@ def getMovingAverageEnvelopeTradeStrategy(
     period: int = 14,
     envelope_percentage: float = 2.5,
     ma_type: str = 'sma',
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True 
 ):
     """
     Estratégia baseada em Moving Average Envelope.
@@ -120,4 +121,24 @@ def getMovingAverageEnvelopeTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_close': current_close,
+            'current_ma': current_ma,
+            'current_upper': current_upper,
+            'current_lower': current_lower,
+            'is_above_upper': is_above_upper,
+            'is_below_lower': is_below_lower,
+            'is_inside_envelope': is_inside_envelope,
+            'upper_cross_up': upper_cross_up,
+            'upper_cross_down': upper_cross_down,
+            'lower_cross_up': lower_cross_up,
+            'lower_cross_down': lower_cross_down,
+            'is_ma_rising': is_ma_rising,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

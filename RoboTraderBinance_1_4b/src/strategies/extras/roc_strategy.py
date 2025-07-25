@@ -18,7 +18,8 @@ def getROCTradeStrategy(
     signal_period: int = 9,
     overbought: int = 10,
     oversold: int = -10,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em ROC (Rate of Change).
@@ -142,4 +143,24 @@ def getROCTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_roc': current_roc,
+            'current_signal': current_signal,
+            'current_histogram': current_histogram,
+            'is_positive': is_positive,
+            'is_rising': is_rising,
+            'is_overbought': is_overbought,
+            'is_oversold': is_oversold,
+            'zero_cross_up': zero_cross_up,
+            'zero_cross_down': zero_cross_down,
+            'signal_cross_up': signal_cross_up,
+            'signal_cross_down': signal_cross_down,
+            'divergence_buy': divergence_buy,
+            'divergence_sell': divergence_sell,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

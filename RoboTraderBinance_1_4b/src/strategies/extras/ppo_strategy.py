@@ -18,7 +18,8 @@ def getPPOTradeStrategy(
     fast_period: int = 12,
     slow_period: int = 26,
     signal_period: int = 9,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em PPO (Percentage Price Oscillator).
@@ -142,4 +143,28 @@ def getPPOTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_ppo': current_ppo,
+            'current_signal': current_signal,
+            'current_histogram': current_histogram,
+            'prev_ppo': prev_ppo,
+            'prev_signal': prev_signal,
+            'prev_histogram': prev_histogram,
+            'divergence_buy': divergence_buy,
+            'divergence_sell': divergence_sell,
+            'is_positive': is_positive,
+            'is_rising': is_rising,
+            'zero_cross_up': zero_cross_up,
+            'zero_cross_down': zero_cross_down,
+            'signal_cross_up': signal_cross_up,
+            'signal_cross_down': signal_cross_down,
+            'histogram_reversal_up': histogram_reversal_up,
+            'histogram_reversal_down': histogram_reversal_down,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

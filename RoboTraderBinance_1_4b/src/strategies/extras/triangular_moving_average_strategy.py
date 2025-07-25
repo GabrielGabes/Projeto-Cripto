@@ -18,7 +18,8 @@ def getTriangularMovingAverageTradeStrategy(
     fast_period: int = 7,
     slow_period: int = 21,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Triangular Moving Average.
@@ -99,4 +100,15 @@ def getTriangularMovingAverageTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'].iloc[-1],
+            'tma': stock_data['tma'].iloc[-1],
+            'fast_tma': stock_data['fast_tma'].iloc[-1],
+            'slow_tma': stock_data['slow_tma'].iloc[-1],
+        }
+        metrics = pd.DataFrame([metrics])
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

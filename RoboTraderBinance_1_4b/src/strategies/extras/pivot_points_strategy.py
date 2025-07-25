@@ -16,7 +16,8 @@ def getPivotPointsTradeStrategy(
     stock_data: pd.DataFrame,
     period: int = 14,
     method: str = 'standard',
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Pivot Points.
@@ -219,4 +220,33 @@ def getPivotPointsTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'current_close': current_close,
+            'current_pp': current_pp,
+            'current_r1': current_r1,
+            'current_r2': current_r2,
+            'current_r3': current_r3,
+            'current_s1': current_s1,
+            'current_s2': current_s2,
+            'current_s3': current_s3,
+            'is_above_pp': is_above_pp,
+            'is_above_r1': is_above_r1,
+            'is_above_r2': is_above_r2,
+            'is_above_r3': is_above_r3,
+            'is_below_s1': is_below_s1,
+            'is_below_s2': is_below_s2,
+            'is_below_s3': is_below_s3,
+            'pp_cross_up': pp_cross_up,
+            'pp_cross_down': pp_cross_down,
+            'r1_cross_up': r1_cross_up,
+            's1_cross_down': s1_cross_down,
+            'uptrend': uptrend,
+            'downtrend': downtrend,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

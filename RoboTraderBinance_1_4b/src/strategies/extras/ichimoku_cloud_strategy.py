@@ -19,7 +19,8 @@ def getIchimokuCloudTradeStrategy(
     senkou_span_b_period: int = 52,
     displacement: int = 26,
     require_confirmation: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Ichimoku Cloud.
@@ -147,4 +148,21 @@ def getIchimokuCloudTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'close_price': stock_data['close_price'],
+            'tenkan_sen': stock_data['tenkan_sen'],
+            'kijun_sen': stock_data['kijun_sen'],
+            'senkou_span_a': stock_data['senkou_span_a'],
+            'senkou_span_b': stock_data['senkou_span_b'],
+            'chikou_span': stock_data['chikou_span'],
+            'tk_cross': stock_data['tk_cross'],
+            'cloud_breakout': stock_data['cloud_breakout'],
+            'cloud_trend': stock_data['cloud_trend'],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

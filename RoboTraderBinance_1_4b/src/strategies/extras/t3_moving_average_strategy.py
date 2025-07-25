@@ -19,7 +19,8 @@ def getT3MovingAverageTradeStrategy(
     fast_period: int = 7,
     slow_period: int = 21,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em T3 Moving Average (Tillson T3).
@@ -124,4 +125,15 @@ def getT3MovingAverageTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            't3': stock_data['t3'],
+            'fast_t3': stock_data['fast_t3'],
+            'slow_t3': stock_data['slow_t3'],
+            't3_slope': stock_data['t3_slope']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

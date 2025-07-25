@@ -20,7 +20,8 @@ def getSchaffTrendCycleTradeStrategy(
     stc_upper: int = 75,
     stc_lower: int = 25,
     use_close: bool = True,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Schaff Trend Cycle.
@@ -119,4 +120,16 @@ def getSchaffTrendCycleTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'last_stc': last_stc,
+            'last_signal': last_signal,
+            'last_cross_lower': last_cross_lower,
+            'last_cross_upper': last_cross_upper,
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+

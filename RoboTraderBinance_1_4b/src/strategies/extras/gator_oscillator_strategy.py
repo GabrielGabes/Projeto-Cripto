@@ -21,7 +21,8 @@ def getGatorOscillatorTradeStrategy(
     jaw_shift: int = 8,
     teeth_shift: int = 5,
     lips_shift: int = 3,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Gator Oscillator.
@@ -146,4 +147,16 @@ def getGatorOscillatorTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'jaw': stock_data['jaw_shifted'],
+            'teeth': stock_data['teeth_shifted'],
+            'lips': stock_data['lips_shifted'],
+            'gator_up': stock_data['gator_up'],
+            'gator_down': stock_data['gator_down']
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision

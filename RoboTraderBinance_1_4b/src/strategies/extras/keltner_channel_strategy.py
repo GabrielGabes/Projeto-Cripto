@@ -17,7 +17,8 @@ def getKeltnerChannelTradeStrategy(
     period: int = 14,
     atr_period: int = 10,
     multiplier: float = 2.0,
-    verbose: bool = True
+    verbose: bool = True,
+    all_metrics_return: bool = True
 ):
     """
     Estratégia baseada em Keltner Channel.
@@ -133,4 +134,18 @@ def getKeltnerChannelTradeStrategy(
         print(f" | Decisão: {'Comprar' if trade_decision == True else 'Vender' if trade_decision == False else 'Nenhuma'}")
         print("-------")
     
-    return trade_decision
+    if all_metrics_return:
+        metrics = {
+            'open_time_join': stock_data['open_time'],
+            'close_price': stock_data['close_price'],
+            'ema': stock_data['ema'],
+            'atr': stock_data['atr'],
+            'upper_band': stock_data['upper_band'],
+            'lower_band': stock_data['lower_band'],
+            'ema_slope': stock_data['ema_slope'],
+        }
+        metrics = pd.DataFrame(metrics)
+        return trade_decision, metrics
+    else:
+        return trade_decision
+
