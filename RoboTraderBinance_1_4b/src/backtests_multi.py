@@ -93,15 +93,17 @@ periodos_candles = [
 
 from tests.geradores_de_amostras.dom_sab import gerar_domingo_sabado_semanas_ano
 # intervalos_tempo = gerar_domingo_sabado_semanas_ano()
-# intervalos_tempo = [['22/12/2024 00:00', '23/07/2025 20:30']]
-intervalos_tempo = [['01/03/2025 00:00','02/03/2025 01:00'],
-                    ['01/03/2025 00:00','03/03/2025 02:00'],
-                    ['01/03/2025 00:00','04/03/2025 03:00'],
-                    ['01/03/2025 00:00','05/03/2025 04:00'],
-                    ['01/03/2025 00:00','06/03/2025 05:00'],
-                    ['01/03/2025 00:00','07/03/2025 06:00'],
-                    ['01/03/2025 00:00','08/03/2025 07:00'],
-                    ['01/03/2025 00:00','09/03/2025 08:00']]
+intervalos_tempo = [['01/12/2024 00:00', '25/07/2025 23:30']]
+# intervalos_tempo = [['01/03/2025 00:00','02/03/2025 01:00'],
+#                     ['01/03/2025 00:00','03/03/2025 02:00'],
+#                     ['01/03/2025 00:00','04/03/2025 03:00'],
+#                     ['01/03/2025 00:00','05/03/2025 04:00'],
+#                     ['01/03/2025 00:00','06/03/2025 05:00'],
+#                     ['01/03/2025 00:00','07/03/2025 06:00'],
+#                     ['01/03/2025 00:00','08/03/2025 07:00'],
+#                     ['01/03/2025 00:00','09/03/2025 08:00'],
+#                     ['01/03/2025 00:00','15/03/2025 07:00'],
+#                     ['01/03/2025 00:00','31/03/2025 07:00']]
 
 count = 0
 # Rodando simulação para cada moeda
@@ -118,7 +120,7 @@ for moeda in moedas:
     
     print(pd.concat([df.head(), df.tail()], axis=0))
     pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
-    df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_TESTE.parquet', index=False)
+    df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_TESTEBBBBBBBBBBBBBBBBBBBBBBBBBB.parquet', index=False)
     # count += 1
     # if count % 2 == 0:
     #     pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
@@ -133,4 +135,4 @@ print(df.shape)
 
 pasta_salvar = 'C:/Users/gabri/OneDrive/Documentos/Criptos/Analises/202507/dados_prices_metrics/'
 # df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_20241222a20250723_15m.parquet', index=False)
-df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_TESTE.parquet', index=False)
+df.to_parquet(pasta_salvar + 'DADOS_SIMULADOS_TESTEBBBBBBBBBBBBBBBBBBBBBBBBBB.parquet', index=False)

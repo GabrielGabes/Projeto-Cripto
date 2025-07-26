@@ -102,9 +102,6 @@ def getTEMATradeStrategy(
     buy_signal = (price_cross_up and is_uptrend) or short_cross_up
     sell_signal = (price_cross_down and not is_uptrend) or short_cross_down
     
-    # Decisão final
-    trade_decision = None
-    
     if buy_signal:
         trade_decision = True  # Comprar
     elif sell_signal:
@@ -133,19 +130,12 @@ def getTEMATradeStrategy(
     if all_metrics_return:
         metrics = {
             'open_time_join': stock_data['open_time'],
-            'current_close': current_close,
-            'current_tema': current_tema,
-            'current_tema_short': current_tema_short,
-            'current_tema_long': current_tema_long,
-            'current_tema_slope': current_tema_slope,
-            'is_uptrend': is_uptrend,
-            'short_above_long': short_above_long,
-            'price_cross_up': price_cross_up,
-            'price_cross_down': price_cross_down,
-            'short_cross_up': short_cross_up,
-            'short_cross_down': short_cross_down,
-            'buy_signal': buy_signal,
-            'sell_signal': sell_signal
+            'tema':stock_data['tema'],
+            'tema_short':stock_data['tema_short'],
+            'tema_long':stock_data['tema_long'],
+            'tema_slope':stock_data['tema_slope'],
+            'tema_short_slope':stock_data['tema_short_slope'],
+            'tema_long_slope':stock_data['tema_long_slope']
         }
         metrics = pd.DataFrame([metrics])
         return trade_decision, metrics

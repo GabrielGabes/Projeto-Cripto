@@ -50,12 +50,12 @@ print(dados_candles.shape)
 # ------------------------------------------------------------------------
 # ⏬ SELEÇÃO DE ESTRATÉGIAS ⏬
 
-from strategies.extras.fractals_strategy import *
-
+from strategies.extras.tema_strategy import getTEMATradeStrategy
+ 
 final_result, price_decision_metrics = backtestRunner(
     stock_data=dados_candles,
-    strategy_function=getFractalsTradeStrategy,
-    nome_estrategia=getFractalsTradeStrategy,
+    strategy_function=getTEMATradeStrategy,
+    nome_estrategia='getTEMATradeStrategy',
     initial_balance=INITIAL_BALANCE,
     start_date=intervalos_tempo[0],
     end_date=intervalos_tempo[1],
